@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "user_rtc.h": "c",
+        "cstddef": "c",
+        "limits": "c",
+        "type_traits": "c",
+        "stdio.h": "c",
+        "initializer_list": "c"
+    }
+}

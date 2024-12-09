@@ -1,0 +1,6 @@
+load STM32G474VETx 
+project name STCubeGenerated 
+project toolchain "MDK-ARM V5" 
+project path "D:\A-Develop\STM32-Soft\7-HT_Probe_0_2\RTE\Device\STM32G474VETx\" 
+set tpl_path "C:\Keil_v5\ARM\PACK\Keil\STM32G4xx_DFP\1.4.0\MDK\CubeMX" 
+set dest_path "STM32G474VETx" 
