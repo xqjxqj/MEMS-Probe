@@ -46,7 +46,7 @@ unsigned short crc_result; // 计算crc
 //提高Qbus的响应速度
 QBUS_Data_TYPE QBUS_Data;
 
- char QBUS_defaut_Client[] = "SOFx50";
+ char QBUS_defaut_Client[] = "SOFx51";
  char QBUS_defaut_Server[] = "MPTx20";
 
 const unsigned short crc_coff[] =
