@@ -43,7 +43,7 @@ unsigned short _TxBytesLength;
 
 unsigned short crc_result; // 计算crc
                            /* Public variables ---------------------------------------------------------*/
-
+//提高Qbus的响应速度
 QBUS_Data_TYPE QBUS_Data;
 
  char QBUS_defaut_Client[] = "SOFx50";
