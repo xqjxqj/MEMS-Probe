@@ -774,7 +774,7 @@ __NO_RETURN void user_app_init(void *arg)
                 Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)AvgInclination*100)& 0xffffff;;  // 方位角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)AvgInclination*100)>> 8);  // 方位角
 
-              
+              //for git test,view
 								
                 // res 4
                 if (sizeof(Flash_Wr_Buf) == 4096)
