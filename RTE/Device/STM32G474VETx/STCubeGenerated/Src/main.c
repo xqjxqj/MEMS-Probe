@@ -238,11 +238,15 @@ int main(void)
   // SetMagGain(119, 3, 127, MagCH0); // Gain1 = 5.001 Gain2 = 40,Voffset = (127+0.5)/256 *5=2.5V
   // SetMagGain(119, 3, 127, MagCH1); // Gain1 = 5.001 Gain2 = 40,Voffset = (127+0.5)/256 *5=2.5V
   // SetMagGain(119, 3, 127, MagCH2); // Gain1 = 5.001 Gain2 = 40,Voffset = (127+0.5)/256 *5=2.5V
-//XQJ
-  SetMagGain(45, 7, 0, MagCH0); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Z,yan tan guan 5 120
-  SetMagGain(118, 6, 126, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
-  SetMagGain(117, 6, 104, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
+//XQJ #3
+//  SetMagGain(45, 7, 0, MagCH0); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Z,yan tan guan 5 120
+ // SetMagGain(118, 6, 126, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
+  //SetMagGain(117, 6, 104, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
 
+//#1
+  SetMagGain(88, 6, 158, MagCH0); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Z,yan tan guan 5 120
+  SetMagGain(88, 6, 45, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
+  SetMagGain(88, 6, 158, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
 
 //这里调用：改个函�?
   Creat_user_app_init_task();

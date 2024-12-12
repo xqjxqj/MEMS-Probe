@@ -16,8 +16,8 @@
         <TargetCommonOption>
           <Device>STM32G474VETx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32G4xx_DFP.1.4.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32G4xx_DFP.1.5.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -625,7 +625,7 @@
         </targetInfos>
       </component>
       <component Cbundle="STM32CubeMX" Cclass="Device" Cgroup="STM32Cube HAL" Cvendor="Keil" Cversion="1.4.0" condition="STM32G4 CMSIS STM32CubeMX">
-        <package name="STM32G4xx_DFP" schemaVersion="1.7.2" url="http://www.keil.com/pack/" vendor="Keil" version="1.4.0"/>
+        <package name="STM32G4xx_DFP" schemaVersion="1.7.2" url="https://www.keil.com/pack/" vendor="Keil" version="1.5.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>

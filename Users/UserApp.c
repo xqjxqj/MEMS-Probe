@@ -20,15 +20,17 @@
 #include "FS_Config_NAND_0.h"
 #include "AttitudeSolve.h"
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 /* Private define ------------------------------------------------------------*/
 
 // stack size must be multiple of 8 Bytes
 #define USER_APP_Init_STK_SZ (5120U)
-#define WINDOW_SIZE 5
-#define N_MAX 8
-#define INCTIME 10
-#define SampleRate 50
+#define WINDOW_SIZE 10
 #define PI 3.14159265358979323846f
+#define INF 100000;
 uint64_t user_app_init_stk[USER_APP_Init_STK_SZ / 8];
 const osThreadAttr_t user_app_init_attr = {
     .stack_mem = &user_app_init_stk[0],
@@ -79,53 +81,52 @@ volatile unsigned short Flash_Wr_Offset = 0;
 //realtime data flag
 uint8_t bNew_Realtime_RawData = 0;
 
-//uint16_t Realtime_RawData[24]; // 存一组实时数据:必须要用字节流上传
 volatile unsigned char Realtime_RawData[48]; //存一组实时数据
-volatile short Realtime_RawData_Temp[24]={0};//用于计算实时数据的均值（用于静态）
+volatile short Realtime_RawData_Temp[24]={0};//用于计算实时数据的均值
 
-//uint16_t Realtime_RawData[ExtADC_Chs + IntADC_VT_Chs];
-//uint16_t *pU16ExtADCRaw; // 实时数据，外部ADC数据地址
-// Sample rate
 
-// correction coefficient
-// gyro: real gyro = measure gyro/(1+GyroCal1)-GyroCal2;
-volatile float GyroCal1 = 1.0330f;
-volatile float GyroCal2 = 3.094f;
-volatile float Static = 10.1598f;
 
 // 姿态角度
-volatile float StaticToolface;  // 静态工具面角
-volatile float DynamicToolface; // 动态工具面角
-volatile float IncGz;           // 井斜
-volatile float AvgInclination;
-short IncCalTime = SampleRate * INCTIME; // 每隔一段时间算一次井斜
-short IncCount = 0;
-float StaticGx = 0;
-float StaticGy = 0;
-uint8_t isCal = 0;
-// 存储历史采样值：用于判断磁波峰
-volatile short StoreMagXRawData[WINDOW_SIZE] = {0};
-volatile short StoreMagYRawData[WINDOW_SIZE] = {0};
+float GyroRotation=0;    // 陀螺转速
+float StaticToolface=0;  // 静态工具面角
+float DynamicToolface=0; // 动态工具面角
+float Inc=0;           // 井斜
+float Azi=0;           //方位
 
-// 用于在识别波峰波谷中对磁数据移动平均
-volatile int SumOfStoreMagXRawData = 0;
-volatile int SumOfStoreMagYRawData = 0;
-volatile unsigned int SampleCount = 0;
+//以下参数用于滑动平均滤波
+float CurrentAzi;
+float CurrentInc;
+float CurrentGyro;
+volatile float AziHistory[WINDOW_SIZE]={0};
+volatile float IncHistory[WINDOW_SIZE]={0};
+volatile float GyroHistory[WINDOW_SIZE]={0};
+float AziHistorySum=0;
+float IncHistorySum=0;
+float GyroHistorySum=0;
+float AziOld=0;
+float IncOld=0;
+float GyroOld=0;
+short AziIndex=0;
+short IncIndex=0;
+short GyroIndex=0;
+short flag=0;
+//地磁场:总场、地磁倾角、地磁偏角
+const float B=50000.0f;
+const float GeoI=30.0f/180.0f*PI;
+const float GeoD=0.0f/180.0f*PI;
 
-// 存储波峰下标
-volatile unsigned int MagXPeaksIndex[N_MAX] = {0};
-volatile unsigned int MagXValleysIndex[N_MAX] = {0};
-volatile unsigned int MagYPeaksIndex[N_MAX] = {0};
-volatile unsigned int MagYValleysIndex[N_MAX] = {0};
-// 取n个周期平均值
-volatile uint8_t N_Period;
+//Bu=-B*sin(GeoI)
+//Bn=B*cos(GeoI)*cos(GeoD);
+//Be=B*cos(GeoI)*sin(GeoD);
+float Bu=25000.0f;
+float Bn=43301.27f;
+float Be=0.0f;
 
-// 各项转速
-volatile float GyroRotation = 0;
-volatile float MagYPeaksRotation = 0;
-volatile float MagXPeaksRotation = 0;
-volatile float MagYValleysRotation = 0;
-volatile float MagXValleysRotation = 0;
+
+//用于粒子群
+const float e1 = 10000;
+const float e3 =10e-8;
+
 /* --------------------------------wkg修改内容------------------------------------*/
 
 extern uint32_t PageIndex;
@@ -200,6 +201,7 @@ void Init_AccRef(void)
     AccSensorRef.TempRef = 982.f;
 #endif
 }
+//原始值均值
 void AvgOfRawData(void){
 	if(Realtime_RawData_Temp[0]==0){
 		//初始化
@@ -212,125 +214,231 @@ void AvgOfRawData(void){
 	  }
 	}
 }
-// 更新储存的磁数组,计算磁转速度
-void RotationFromRawMagData(void)
+//滑动平均滤波
+float slidingAverageFilter(float newMeasurement, float *historysum, short *index, float oldMeasurement,short flag) {
+    *historysum += newMeasurement-oldMeasurement;
+    *index = (*index + 1) % WINDOW_SIZE;
+    return *historysum/flag;
+}
+
+//Mz理论值
+float MzTheory(float EA, float EI,float cbz)
 {
-    SumOfStoreMagXRawData -= StoreMagXRawData[0];
-    SumOfStoreMagYRawData -= StoreMagYRawData[0];
-    SumOfStoreMagXRawData += RawExtADCData[10] / WINDOW_SIZE;
-    SumOfStoreMagYRawData += RawExtADCData[9] / WINDOW_SIZE;
-    for (uint16 i = 0; i < WINDOW_SIZE - 1; i++)
+    return -cos(EA) * sin(EI) * Bn + sin(EA) * sin(EI) * Be + cos(EI) * Bu - cbz;
+}
+
+//适应性函数，判断估计值EA,EI的可信度，el为阈值
+float Fitness(float EA, float EI,float cbz, double e1)
+{
+    float bz;
+    bz = fabs(MzTheory(EA, EI,cbz));
+    if (bz > e1)
     {
-        StoreMagXRawData[i] = StoreMagXRawData[i + 1];
-        StoreMagYRawData[i] = StoreMagYRawData[i + 1];
+      return INF;
+    }else{
+    return bz;
     }
-    // 滑动平均，将最新值存入数组末
-    StoreMagXRawData[WINDOW_SIZE - 1] = SumOfStoreMagXRawData / WINDOW_SIZE;
-    StoreMagYRawData[WINDOW_SIZE - 1] = SumOfStoreMagYRawData / WINDOW_SIZE;
-    RawExtADCData[10] = SumOfStoreMagXRawData / WINDOW_SIZE;
-    RawExtADCData[9] = SumOfStoreMagYRawData / WINDOW_SIZE;
-    // MagX
-    if ((StoreMagXRawData[WINDOW_SIZE - 2] > StoreMagXRawData[WINDOW_SIZE - 1]) && (StoreMagXRawData[WINDOW_SIZE - 2] > StoreMagXRawData[WINDOW_SIZE - 3]))
+}
+//判断参数是否处于范围
+float OnRange(float pos,float rangemin, float rangemax)
+{
+    if (pos<rangemin)
     {
-        // 是波峰,存入波峰数组
-
-        for (uint16 i = 0; i < N_MAX - 1; i++)
-        {
-            MagXPeaksIndex[i] = MagXPeaksIndex[i + 1];
-        }
-        MagXPeaksIndex[N_MAX - 1] = SampleCount;
-        if (MagXPeaksIndex[N_MAX - 1 - N_Period] != 0)
-        {
-            // 计算平均转速
-            MagXPeaksRotation = N_Period * 360.0f / (MagXPeaksIndex[N_MAX - 1] - MagXPeaksIndex[N_MAX - 1 - N_Period]) * SampleRate;
-        }
-    }
-
-    if ((StoreMagXRawData[WINDOW_SIZE - 1] > StoreMagXRawData[WINDOW_SIZE - 2]) && (StoreMagXRawData[WINDOW_SIZE - 3] > StoreMagXRawData[WINDOW_SIZE - 2]))
+        return rangemin;
+    }else if(pos>rangemax)
     {
-        // 是波谷
-        for (uint16 i = 0; i < N_MAX - 1; i++)
-        {
-            MagXValleysIndex[i] = MagXValleysIndex[i + 1];
-        }
-        MagXValleysIndex[N_MAX - 1] = SampleCount;
-        if (MagXValleysIndex[N_MAX - 1 - N_Period] != 0)
-        {
-            // 计算平均转速
-            MagXValleysRotation = N_Period * 360.0f / (MagXValleysIndex[N_MAX - 1] - MagXValleysIndex[N_MAX - 1 - N_Period]) * SampleRate;
-        }
-    }
-
-    // MagY
-    if ((StoreMagYRawData[WINDOW_SIZE - 2] > StoreMagYRawData[WINDOW_SIZE - 1]) && (StoreMagYRawData[WINDOW_SIZE - 2] > StoreMagYRawData[WINDOW_SIZE - 3]))
+        return rangemax;
+    }else
     {
-        // 是波峰,存入波峰数组
-
-        for (uint16 i = 0; i < N_MAX - 1; i++)
-        {
-            MagYPeaksIndex[i] = MagYPeaksIndex[i + 1];
-        }
-        MagYPeaksIndex[N_MAX - 1] = SampleCount;
-        if (MagYPeaksIndex[N_MAX - 1 - N_Period] != 0)
-        {
-            // 计算平均转速
-            MagYPeaksRotation = N_Period * 360.0f / (MagYPeaksIndex[N_MAX - 1] - MagYPeaksIndex[N_MAX - 1 - N_Period]) * SampleRate;
-        }
-    }
-
-    if ((StoreMagYRawData[WINDOW_SIZE - 1] > StoreMagYRawData[WINDOW_SIZE - 2]) && (StoreMagYRawData[WINDOW_SIZE - 3] > StoreMagYRawData[WINDOW_SIZE - 2]))
-    {
-        // 是波谷
-        for (uint16 i = 0; i < N_MAX - 1; i++)
-        {
-            MagYValleysIndex[i] = MagYValleysIndex[i + 1];
-        }
-        MagYValleysIndex[N_MAX - 1] = SampleCount;
-        if (MagYValleysIndex[N_MAX - 1 - N_Period] != 0)
-        {
-            // 计算平均转速
-            MagYValleysRotation = N_Period * 360.0f / (MagYValleysIndex[N_MAX - 1] - MagYValleysIndex[N_MAX - 1 - N_Period]) * SampleRate;
-        }
+        return pos;
     }
 }
 
-// 寻找最优周期
-uint8_t CalParm_n(float gyrov)
+//取数组最小值，并返回位置
+float* findmin(float array[],int arraylength)
 {
-
-    float mingap = 1.0f;
-    uint8_t n_min = 0;
-    for (uint8_t wkg = 1; wkg < N_MAX; wkg++)
+    float MinandIndex[2]={array[0],0};
+    float* ans;
+    for (short i=1;i<arraylength;i++)
     {
-        float Ans = wkg * 360 * SampleRate / gyrov;
-        float Ans_Int = roundf(Ans);
-        if (fabsf(Ans - Ans_Int) < 0.1f)
-        {
-            return wkg;
+         if (array[i]<MinandIndex[0])
+         {
+            MinandIndex[0]=array[i];
+            MinandIndex[1]=i;
+         }
+    }
+    ans=&MinandIndex[0];
+    return ans;
+}
+
+//PSO解算方位角和井斜角
+void PSO(){
+
+	
+	  //范围限制
+   float alimit[2] = {(Azi-1),(Azi+1)};
+   float ilimit[2] = {(Inc-1.5),(Inc+1)};
+		//float alimit[2] = {(40.0),(40.0)};
+   // float ilimit[2] = {(44.1),(46.2)};
+    // 速度限制
+    float avlimit[2] = {-0.5, 0.5};
+    float ivlimit[2] = {-0.5, 0.5};
+		short ger = 50;
+    // 种群数量
+    short NumOfBird = 20;
+		// 粒子初始速度与位置
+    float birdapos[NumOfBird];
+    float birdipos[NumOfBird];
+  
+    float birdav[NumOfBird];
+    float birdiv[NumOfBird];
+    // 粒子位置、速度初始化
+    // 固定粒子
+    birdapos[0] = alimit[0];
+    birdipos[0] = ilimit[0];
+    birdapos[1] = alimit[1];
+    birdipos[1] = ilimit[0];
+    birdapos[2] = alimit[0];
+    birdipos[2] = ilimit[1];
+    birdapos[3] = alimit[1];
+    birdipos[3] = ilimit[1];
+    birdapos[4] = alimit[0];
+    birdipos[4] = ilimit[0];
+    birdapos[5] = alimit[1];
+    birdipos[5] = ilimit[1];
+    birdapos[6] = alimit[0];
+    birdipos[6] = ilimit[1];
+    birdapos[7] = alimit[1];
+    birdipos[7] = ilimit[0];
+    birdapos[8] = (alimit[0] + alimit[1]) / 2;
+    birdipos[8] = (ilimit[0] + ilimit[1]) / 2;
+	
+		
+		//随机粒子
+		// srand((unsigned)time(NULL)); 本系统不支持，无语
+		srand(12345);
+	
+    for (short i=9;i<NumOfBird;i++)
+    {
+        birdapos[i]= alimit[0] + 1.0 * (rand() % RAND_MAX) / RAND_MAX * (alimit[1] - alimit[0]);
+        birdipos[i]= ilimit[0] + 1.0 * (rand() % RAND_MAX) / RAND_MAX * (ilimit[1] - ilimit[0]);
+    }
+    //速度初始化
+    for (short i=0;i<NumOfBird;i++)
+    {
+        birdav[i]= avlimit[0] + 1.0 * (rand() % RAND_MAX) / RAND_MAX * (avlimit[1] - avlimit[0]);
+        birdiv[i]= ivlimit[0] + 1.0 * (rand() % RAND_MAX) / RAND_MAX * (ivlimit[1] - ivlimit[0]);
+    }
+		
+	
+
+		
+		//权值
+    float w = 0.2;
+    float c1 = 0.2;
+    float c2 = 0.8;
+		//个体最优适应度、位置
+    float pbestfitness[NumOfBird];
+    float pbesta[NumOfBird];
+    float pbesti[NumOfBird];
+    for (short i=0;i<NumOfBird;i++)
+    {
+        pbestfitness[i]=INF;
+    }
+		//群体最优适应度、位置
+    float gbestfitness=INF;
+    float gbesta;
+    float gbesti;
+    
+    //每次迭代粒子适应度
+    float birdfitness[NumOfBird];
+    short t=0;
+    short index;
+    float* temp;
+		//粒子群算法测试，模拟一组测量值
+		
+		//float testBz=MzTheory(40.0f/180.0f*PI, 45.0f/180.0f*PI,0);  
+		float testBz=fMagData.MagZ;
+		while(t<ger)
+    {   
+        //第t次迭代各粒子的适应度
+        for (short i=0; i<NumOfBird; i++)
+        {   
+          // birdfitness[i]=Fitness(birdapos[i]/180.0*PI, birdipos[i]/180.0 * PI,fMagData.MagZ,e1);
+					 birdfitness[i]=Fitness(birdapos[i]/180.0*PI, birdipos[i]/180.0 * PI,testBz,e1);
         }
-        else
+        //更新群体最优适应度以及位置
+        temp=findmin(birdfitness,NumOfBird);
+        if (temp[0]<gbestfitness)
         {
-            if (fabs(Ans - Ans_Int) < mingap)
+            gbestfitness=temp[0];
+            index=temp[1];
+            gbesta=birdapos[index];
+            gbesti=birdipos[index];                  
+        }
+
+        //判断是否达到截止阈值
+        if (gbestfitness<e3)
+        {
+            break;
+        }
+
+        //更新个体最优适应度、位置
+        for (short i=0; i<NumOfBird; i++)
+        {
+            if (birdfitness[i]<pbestfitness[i])
             {
-                n_min = wkg;
-                mingap = fabs(Ans - Ans_Int);
+                pbestfitness[i]=birdfitness[i];
+                pbesta[i]=birdapos[i];
+                pbesti[i]=birdipos[i];
+              
             }
         }
+
+        //更新粒子速度
+        for (short i=0; i<NumOfBird;i++)
+        {
+            birdav[i]=birdav[i]*w+0.5*(rand()/RAND_MAX+1.0)*(pbesta[i]-birdapos[i])+0.5*(rand()/RAND_MAX+1.0)*(gbesta-birdapos[i]);
+            birdav[i]=OnRange(birdav[i],avlimit[0], avlimit[1]);
+            birdiv[i]=birdav[i]*w+0.5*(rand()/RAND_MAX+1.0)*(pbesti[i]-birdipos[i])+0.5*(rand()/RAND_MAX+1.0)*(gbesti-birdipos[i]);
+            birdiv[i]=OnRange(birdiv[i],ivlimit[0], ivlimit[1]);  
+                    
+        }
+
+        //更新粒子位置
+        for (short i=0;i<NumOfBird; i++)
+        {
+            birdapos[i]+=birdav[i];
+            birdapos[i]=OnRange(birdapos[i],alimit[0], alimit[1]);
+            birdipos[i]+=birdiv[i];
+            birdipos[i]=OnRange(birdipos[i],ilimit[0], ilimit[1]);
+        }
+
+        t++;
     }
-    return n_min;
+	  CurrentAzi=gbesta;
+	  CurrentInc=gbesti;
+
 }
+
+//归一化
+void Normalization(float *Mx,float *My,float *Mz,float TotalB){
+	*Mx=*Mx/TotalB;
+	*My=*My/TotalB;
+	*Mz=*Mz/TotalB;
+}
+
 
 /**
  * @brief 把外部ADC的原始值转换成未校正的实际值
  *
  */
 void ConvertExtADC(void)
-{ // 直接将校正值赋给RawExtADCData
+{   // 直接将校正值赋给RawExtADCData
     float ftmp;
-
     // ExtADC ADS8345 Vref=2.5V
     // 0-2*Vref = 0-5V = -32768 ~ 32767
-
+	
     // rotate转速
     ftmp = RawExtADCData[6];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.GyroRef) / 0.67f; // dps
@@ -345,26 +453,26 @@ void ConvertExtADC(void)
     // HR1_X  356B_1_X x加速度1
     ftmp = RawExtADCData[0]; // Vout=V1P8A/2+(0.125g /℃*(T-25) + G) * 80mV/g * (0.01*(T-25))
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
-   // fDiffAccData.AccHxP = ftmp;
-fDiffAccData.AccHxP = ftmp;//xqj
+    // fDiffAccData.AccHxP = ftmp;
+    fDiffAccData.AccHxP = ftmp;//xqj
     // HR1_Y  -356B_1_Z y加速度1
     ftmp = RawExtADCData[1];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
     fDiffAccData.AccHyP = 0 - ftmp;
-//fDiffAccData.AccHyP =  ftmp;//xqj
+    //fDiffAccData.AccHyP =  ftmp;//xqj
     // HR1_Z  -356B_1_Y z加速度1
     ftmp = RawExtADCData[2];
     // ftmp = (ftmp / 32768.0f * 2500.0f + 2500.0f  - 900.0f) / 80.0f;
     // ftmp = ftmp / 1048.576f + 20.0f;
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
-   // fDiffAccData.AccHzP = 0 - ftmp;
- fDiffAccData.AccHzP = 0-ftmp;//xqj
+    // fDiffAccData.AccHzP = 0 - ftmp;
+    fDiffAccData.AccHzP = 0-ftmp;//xqj
     // HR2_X  -356B_2_Y x加速度2
     ftmp = RawExtADCData[3];
     //fDiffAccData.AccHxN = ftmp;
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRNRef) / 80.0f;
     fDiffAccData.AccHxN = 0 - ftmp;
-   //fDiffAccData.AccHxN =  ftmp;
+    //fDiffAccData.AccHxN =  ftmp;
     // HR2_Y  356B_2_Z y加速度2
     ftmp = RawExtADCData[4];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRNRef) / 80.0f;
@@ -374,7 +482,7 @@ fDiffAccData.AccHxP = ftmp;//xqj
     ftmp = RawExtADCData[5];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRNRef) / 80.0f;
     fDiffAccData.AccHzN = ftmp;
-//fDiffAccData.AccHzN = 0 - ftmp;//xqj
+    //fDiffAccData.AccHzN = 0 - ftmp;//xqj
     // mag  // 传感器100000nT输出5mV，放大800倍
     // MAG_X
     ftmp = RawExtADCData[8];
@@ -401,12 +509,12 @@ fDiffAccData.AccHxP = ftmp;//xqj
     ftmp = RawExtADCData[12];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLRPRef) / 400.0f;
     fDiffAccData.AccLyP = 0 - ftmp;
-//fDiffAccData.AccLyP = ftmp;//xqj
+    //fDiffAccData.AccLyP = ftmp;//xqj
     // LR1_Z -354_1_Y z加速度3
     ftmp = RawExtADCData[13];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLRPRef) / 400.0f;
     fDiffAccData.AccLzP = 0 - ftmp;
-//fDiffAccData.AccLzP = ftmp;//xqj
+    //fDiffAccData.AccLzP = ftmp;//xqj
 
 
     // LR2_X  354_2_Z
@@ -434,27 +542,27 @@ fDiffAccData.AccHxP = ftmp;//xqj
     ftmp = RawExtADCData[18];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45PRef) / 400.0f;
     fDiffAccData.AccL45yP = ftmp;
-//fDiffAccData.AccL45yP = 0 - ftmp;//XQJ
+    //fDiffAccData.AccL45yP = 0 - ftmp;//XQJ
     // LR3_Z*  354_3_X
     ftmp = RawExtADCData[19];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45PRef) / 400.0f;
     fDiffAccData.AccL45zP = ftmp;//XQJ
-//fDiffAccData.AccL45zP = 0 - ftmp;
+    //fDiffAccData.AccL45zP = 0 - ftmp;
     // LR4_X  354_4_Z
     ftmp = RawExtADCData[20];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
     fDiffAccData.AccL45xN = ftmp;
-//fDiffAccData.AccL45xN = 0-ftmp;//XQJ
+    //fDiffAccData.AccL45xN = 0-ftmp;//XQJ
     // LR4_Y*  354_4_X
     ftmp = RawExtADCData[21];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
     fDiffAccData.AccL45yN = ftmp;
-//fDiffAccData.AccL45yN =0- ftmp;//xqj
+    //fDiffAccData.AccL45yN =0- ftmp;//xqj
     // LR4_Z*  354_4_Y
     ftmp = RawExtADCData[22];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
     fDiffAccData.AccL45zN = ftmp;
-//fDiffAccData.AccL45zN = 0 - ftmp;//xqj
+    //fDiffAccData.AccL45zN = 0 - ftmp;//xqj
     // current
     ftmp = RawExtADCData[23];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref);
@@ -525,25 +633,10 @@ __NO_RETURN void user_app_init(void *arg)
 		HAL_TIM_Base_Start_IT(&htim4);
 		HAL_ADC_Start_DMA(&hadc5,(uint32_t*)vbat,2);
 		
-		
-		
-
     // HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim1); // 开启ExtADC 定期采样
 		User_UART_Start(Huart1_Index);
     Init_MWD_APP();
-    //Creat_user_app_CMD_task();
-		
-	
-		/*uint16_t SendLength;
-		uint8_t SendBuf[128];
-		
-    
-   User_UART_Start(Huart3_Index);
-   SendLength = sprintf((char *)SendBuf, "%s", "helll STM32G474!");
-   Com_Send_Data(SendBuf, SendLength);
-   SendLength = 0;
-		*/
     while (1)
     {
         Get_RTC_DDHHMMSS(rtc_val);
@@ -582,105 +675,78 @@ __NO_RETURN void user_app_init(void *arg)
             LED_R_ON;
             // 采集数据：数据赋给RawExtADCData
             ExtADC_GetResult((unsigned short *)RawExtADCData); // 用时 1.5ms
-            AvgOfRawData();                                               // 采样点数
-            SampleCount++;
-
+					  //给原始值取均值
+            AvgOfRawData();   
             // 数据转换
             ConvertExtADC();
-            // 计算井斜角:多次计算取均值
-					/*
-            if (IncCount <= IncCalTime)
-            {
-                IncCount++;
-                IncGz += fDiffAccData.AccLzP;
-            }
-            else
-            {
-                AvgInclination = acos((IncGz / IncCount) / 1.0f) / PI * 180.0f;
-                IncCount = 0;
-            }
+					  // 磁数据归一化
+				  	//Normalization(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,B);
+            // 数据校正：
+           // gyroRotation(&fRotate,fTemperature); // 陀螺转速校正
+				  	//加速度计校正，这里使用AccLP加速度组，即第三组，其他组暂时用不用
+					 // AccCalibrate(&fDiffAccData.AccLxP,&fDiffAccData.AccLyP,&fDiffAccData.AccLzP,fTemperature,3);
+					  //磁校正
+					 // MagCalibrate(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,fTemperature);
+					
 
-            // 陀螺转速
-            GyroRotation = gyroRotation(fRotate, Static, GyroCal1, GyroCal2);
-            // 计算最优周期
-            N_Period = CalParm_n(GyroRotation);
-            */
+					  //姿态角解算
+					  if (fRotate<40.0&&fRotate>-40.0){
+								//静态
+							StaticToolface=GravityToolface(fDiffAccData.AccLxP,fDiffAccData.AccLyP);
+							DynamicToolface=StaticToolface;
+							CurrentInc=calculateInclination(fDiffAccData.AccLxP,fDiffAccData.AccLyP,fDiffAccData.AccLzP);					  
+							CurrentAzi=calculateAzi(CurrentInc,Be,Bn,Bu,fMagData.MagZ,GeoD,CurrentAzi);			
 						
+							  //测试一下粒子群算法
+							  //预设井斜角方位角
+							// Inc=45.0;
+							// Azi=40.0;
+							// CurrentInc=45.0;
+							// CurrentAzi=45.0;
+							// CurrentAzi=MzTheory(40.0f/180.0f*PI, 45.0f/180.0f*PI,0);
+							   PSO();
+							//
+						}else{
+						    //动态
 						
-            // 提取磁转速
-						/*
-            if (GyroRotation > 10.0f || GyroRotation < -10.0f)
-            {
-                // 动态：转速不为0
-                if (isCal == 0)
-                {
-                    StaticToolface = GravityToolface(StaticGx, StaticGy);
-                    DynamicToolface = StaticToolface;
+						  DynamicToolface+=fRotate/50.0f;
+							if(DynamicToolface>360.0f) DynamicToolface-=360;
+							//	CurrentInc=calculateInclination(fDiffAccData.AccLxP,fDiffAccData.AccLyP,fDiffAccData.AccLzP);					  
+							//	CurrentAzi=calculateAzi(CurrentInc,Be,Bn,Bu,fMagData.MagZ,GeoD,CurrentAzi);		
+							PSO();			
 
-                    StaticGx = 0;
-                    StaticGy = 0;
-                    isCal = 1;
-                }
+							
+						}
+						//姿态解算结束
+						
+						//滑动平均
+						
+						if(flag<WINDOW_SIZE){
+								//测量值数量小于窗口长度
+								flag++;
+								AziOld=0;
+								IncOld=0;
+												
+						}else{
+							AziOld=AziHistory[AziIndex];
+              IncOld=IncHistory[IncIndex];
+										
+						}  
+						AziHistory[AziIndex]=CurrentAzi;
+						IncHistory[IncIndex]=CurrentInc;
+						Azi=slidingAverageFilter(CurrentAzi,&AziHistorySum,&AziIndex, AziOld,flag);
+						Inc=slidingAverageFilter(CurrentInc,&IncHistorySum,&IncIndex, IncOld,flag);
 
-                RotationFromRawMagData();
-                DynamicToolface = calculateCurrentAngle(DynamicToolface, GyroRotation / SampleRate);
-            }
-            else
-            {
-                // 静态重置
-                if (isCal == 1)
-                {
-                    for (uint16 ii = 0; ii < N_MAX; ii++)
-                    {
-                        MagXPeaksIndex[ii] = 0;
-                        MagXValleysIndex[ii] = 0;
-                        MagYPeaksIndex[ii] = 0;
-                        MagYValleysIndex[ii] = 0;
-                    }
-                    for (uint16 ii = 0; ii < WINDOW_SIZE; ii++)
-                    {
-                        StoreMagXRawData[ii] = 0;
-                        StoreMagXRawData[ii] = 0;
-                    }
-                    SumOfStoreMagXRawData = 0;
-                    SumOfStoreMagYRawData = 0;
-                    MagXPeaksRotation = 0;
-                    MagXValleysRotation = 0;
-                    MagYPeaksRotation = 0;
-                    MagYValleysRotation = 0;
-                    isCal = 0;
-                }
-                // 计算静态工具面角:求gy\gx的均值
-                if (StaticGx == 0)
-                    StaticGx = fDiffAccData.AccLxP;
-                else
-                {
-                    StaticGx = StaticGx / 2.0f + fDiffAccData.AccLxP / 2.0f;
-                }
-
-                if (StaticGy == 0)
-                    StaticGy = fDiffAccData.AccLyP;
-                else
-                {
-                    StaticGx = StaticGy / 2.0f + fDiffAccData.AccLyP / 2.0f;
-                }
-            }
-            */
-            // 存校正后的陀螺转速等数据
-						/*
-            splitFloat(GyroRotation, &RawExtADCData[21], &RawExtADCData[22]);
-            splitFloat(MagXPeaksRotation, &RawExtADCData[19], &RawExtADCData[20]);
-            splitFloat(MagXValleysRotation, &RawExtADCData[17], &RawExtADCData[18]);
-            splitFloat(MagYPeaksRotation, &RawExtADCData[15], &RawExtADCData[16]);
-            splitFloat(MagYValleysRotation, &RawExtADCData[13], &RawExtADCData[14]);
-            splitFloat(AvgInclination, &RawExtADCData[8], &RawExtADCData[9]);
-            splitFloat(DynamicToolface, &RawExtADCData[10], &RawExtADCData[11]);
-            RawExtADCData[12] = N_Period;
-						*/ //XQJ 
+				    //滑动平均结束
+						
+						//上传QB
+					  mwd2_data_tx.inc = CurrentInc;
+					  mwd2_data_tx.azi = CurrentAzi;
+					  mwd2_data_tx.update = 1;
             LED_R_OFF;
 						
-						splitFloat(mwd2_data_tx.inc, &RawExtADCData[21], &RawExtADCData[22]);
-						splitFloat(mwd2_data_tx.azi, &RawExtADCData[21], &RawExtADCData[22]);
+						//splitFloat(mwd2_data_tx.inc, &RawExtADCData[21], &RawExtADCData[22]);
+						//splitFloat(mwd2_data_tx.azi, &RawExtADCData[21], &RawExtADCData[22]);
 
             if (MagIndex < 2)
             {
@@ -753,28 +819,19 @@ __NO_RETURN void user_app_init(void *arg)
                 // current 2
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (RawExtADCData[23]) & 0xff;
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (RawExtADCData[23] >> 8) & 0xff;
-                //INC 4
-				/*				
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[0]) & 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[0] >> 8)& 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[1])& 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[1] >> 8)& 0xffffff;
-								//AZI 4
-								Flash_Wr_Buf[Flash_Wr_Offset++] =  IncAzi[2]& 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[2] >> 8)& 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[3])& 0xffffff;
-								Flash_Wr_Buf[Flash_Wr_Offset++] = (IncAzi[3] >> 8)& 0xffffff;
-*/
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)(StaticToolface*100))& 0xffffff;;  // 静态工具面角
+								
+                //姿态角存入包头：？
+							
+                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)(StaticToolface*100))& 0xff;  // 静态工具面角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)(StaticToolface*100))>> 8);  // 静态工具面角
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)DynamicToolface*100)& 0xffffff;;  // 动态工具面角
+                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)DynamicToolface*100)& 0xfff;  // 动态工具面角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)DynamicToolface*100)>> 8);  // 动态工具面角
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)IncGz*100)& 0xffffff;;  // 井斜
-                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)IncGz*100)>> 8);  // 井斜
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)AvgInclination*100)& 0xffffff;;  // 方位角
-                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)AvgInclination*100)>> 8);  // 方位角
-
-              //for git test,view
+                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Inc*100)& 0xff;  // 井斜
+                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Inc*100)>> 8);  // 井斜
+                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Azi*100)& 0xff;  // 方位角
+                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Azi*100)>> 8);  // 方位角
+							
+                //for git test,view
 								
                 // res 4
                 if (sizeof(Flash_Wr_Buf) == 4096)
@@ -816,26 +873,26 @@ __NO_RETURN void user_app_init(void *arg)
         if (Flash_Wr_Offset >= sizeof(Flash_Wr_Buf))
         {
            
-					  mwd2_data_tx.inc = 90;
-					  mwd2_data_tx.azi = 160;
-					  mwd2_data_tx.update = 1;
+					  //mwd2_data_tx.inc = Inc;
+					 // mwd2_data_tx.azi = Azi;
+					  //mwd2_data_tx.update = 1;
             LED_G_ON;
             Storage_APP_Add_MixSensorRaw_Log((uint8_t *)Flash_Wr_Buf, sizeof(Flash_Wr_Buf));//xqj
 				    LED_G_OFF;
             
-					  bNew_Realtime_RawData = 1; // 提示有新的原始数据
-					   short test;
-					   for (i = 0; i < 24; i++){
+					   bNew_Realtime_RawData = 1; // 提示有新的原始数据
+					
+				     Realtime_RawData_Temp[20]=0;//非常玄学的一行，不加这一行后面赋值都不行:借用他的位置上传实时姿态角
+					   Realtime_RawData_Temp[20]=(short)(Inc*100);
+					   Realtime_RawData_Temp[21]=(short)(Azi*100);
+             Realtime_RawData_Temp[22]=(short)(StaticToolface*100);
+					
+ 					   for (i = 0; i < 24; i++){
                 Realtime_RawData[2*i] = (Realtime_RawData_Temp[i]) & 0xff;							  
                 Realtime_RawData[2*i+1] = (Realtime_RawData_Temp[i] >> 8) & 0xff;
 							  Realtime_RawData_Temp[i]=0;//复位
-               /*
-							 test=i;
-							 Realtime_RawData[2*i] = (test) & 0xff;					 
-               Realtime_RawData[2*i+1] = (test>> 8) & 0xff;*/
             }
-						 
-     
+
 					  mwd2_data_tx.update = 1;
             Flash_Wr_Offset = 0;
 						

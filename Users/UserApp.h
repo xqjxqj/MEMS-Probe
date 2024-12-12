@@ -104,6 +104,8 @@ typedef struct
     float TempRef;     // A:temperature ref at 25C
 }AccRefTypeDef;
 
+
+
 /* Public macro -------------------------------------------------------------*/
 
 /* Public variables ---------------------------------------------------------*/
