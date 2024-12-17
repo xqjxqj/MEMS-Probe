@@ -105,7 +105,7 @@ void User_UART_Start(uint8_t index)
 
 #if Using_RTO
 		// config timeout
-		HAL_UART_ReceiverTimeout_Config(&huart1, 100); // 时间单位是 1/波特率 ， 10个bit是一个byte时间
+		HAL_UART_ReceiverTimeout_Config(&huart1, 30); // 时间单位是 1/波特率 ， 10个bit是一个byte时间
 		HAL_UART_EnableReceiverTimeout(&huart1);
 
 		__HAL_UART_ENABLE_IT(&huart1, UART_IT_RTO);

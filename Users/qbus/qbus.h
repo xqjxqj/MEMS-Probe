@@ -85,7 +85,7 @@ typedef struct
 } QBUS_Data_TYPE;
 
 #define QBUS_MAX_GVs 16
-#define default_QBUS_Clinet_ID 50
+#define default_QBUS_Clinet_ID 51
 
 /* Public macro -------------------------------------------------------------*/
 

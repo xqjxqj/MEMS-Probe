@@ -21,7 +21,7 @@ extern UART_HandleTypeDef huart3;
 
 #define Using_RTO  1
 
-#define UART_RX_BUF_SIZE   32
+#define UART_RX_BUF_SIZE  32
 
 // typedef struct
 // {
