@@ -1,5 +1,5 @@
 ./objects/stm32g4xx_hal_msp.o: \
-  C:\Users\53433\Desktop\3hao\MEMS_Probe_hw02_V0.2_fw-20241208\RTE\Device\STM32G474VETx\STCubeGenerated\Src\stm32g4xx_hal_msp.c \
+  C:\Users\53433\Desktop\3hao\MEMS_Probe_hw02_V0.2_fw-20241212-XW(1)\MEMS_Probe_hw02_V0.2_fw-20241212-XW\RTE\Device\STM32G474VETx\STCubeGenerated\Src\stm32g4xx_hal_msp.c \
   RTE\_Target_1\Pre_Include_Global.h \
   RTE\Device\STM32G474VETx\STCubeGenerated\Inc\main.h \
   C:\Users\53433\AppData\Local\Arm\Packs\Keil\STM32G4xx_DFP\1.5.0\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \

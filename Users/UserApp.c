@@ -28,7 +28,7 @@
 
 // stack size must be multiple of 8 Bytes
 #define USER_APP_Init_STK_SZ (5120U)
-#define WINDOW_SIZE 10
+#define WINDOW_SIZE 100
 #define PI 3.14159265358979323846f
 #define INF 100000;
 uint64_t user_app_init_stk[USER_APP_Init_STK_SZ / 8];
@@ -118,7 +118,7 @@ const float GeoD=0.0f/180.0f*PI;
 //Bu=-B*sin(GeoI)
 //Bn=B*cos(GeoI)*cos(GeoD);
 //Be=B*cos(GeoI)*sin(GeoD);
-float Bu=25000.0f;
+float Bu=-25000.0f;
 float Bn=43301.27f;
 float Be=0.0f;
 
@@ -224,7 +224,7 @@ float slidingAverageFilter(float newMeasurement, float *historysum, short *index
 //Mz理论值
 float MzTheory(float EA, float EI,float cbz)
 {
-    return -cos(EA) * sin(EI) * Bn + sin(EA) * sin(EI) * Be + cos(EI) * Bu - cbz;
+    return -cos(EA) * sin(EI) * Bn + sin(EA) * sin(EI) * Be - cos(EI) * Bu - cbz;
 }
 
 //适应性函数，判断估计值EA,EI的可信度，el为阈值
@@ -682,15 +682,15 @@ __NO_RETURN void user_app_init(void *arg)
 					  // 磁数据归一化
 				  	//Normalization(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,B);
             // 数据校正：
-           // gyroRotation(&fRotate,fTemperature); // 陀螺转速校正
+            gyroRotation(&fRotate,fTemperature); // 陀螺转速校正
 				  	//加速度计校正，这里使用AccLP加速度组，即第三组，其他组暂时用不用
-					 // AccCalibrate(&fDiffAccData.AccLxP,&fDiffAccData.AccLyP,&fDiffAccData.AccLzP,fTemperature,3);
+					  AccCalibrate(&fDiffAccData.AccLxP,&fDiffAccData.AccLyP,&fDiffAccData.AccLzP,fTemperature,3);
 					  //磁校正
-					 // MagCalibrate(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,fTemperature);
+					  MagCalibrate(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,fTemperature);
 					
 
 					  //姿态角解算
-					  if (fRotate<40.0&&fRotate>-40.0){
+					  if (fRotate<20.0f&&fRotate>-20.0f){
 								//静态
 							StaticToolface=GravityToolface(fDiffAccData.AccLxP,fDiffAccData.AccLyP);
 							DynamicToolface=StaticToolface;
@@ -704,18 +704,14 @@ __NO_RETURN void user_app_init(void *arg)
 							// CurrentInc=45.0;
 							// CurrentAzi=45.0;
 							// CurrentAzi=MzTheory(40.0f/180.0f*PI, 45.0f/180.0f*PI,0);
-							   PSO();
+							  // PSO();
 							//
 						}else{
 						    //动态
 						
 						  DynamicToolface+=fRotate/50.0f;
 							if(DynamicToolface>360.0f) DynamicToolface-=360;
-							//	CurrentInc=calculateInclination(fDiffAccData.AccLxP,fDiffAccData.AccLyP,fDiffAccData.AccLzP);					  
-							//	CurrentAzi=calculateAzi(CurrentInc,Be,Bn,Bu,fMagData.MagZ,GeoD,CurrentAzi);		
-							PSO();			
-
-							
+						  PSO();									
 						}
 						//姿态解算结束
 						
@@ -740,8 +736,8 @@ __NO_RETURN void user_app_init(void *arg)
 				    //滑动平均结束
 						
 						//上传QB
-					  mwd2_data_tx.inc = CurrentInc;
-					  mwd2_data_tx.azi = CurrentAzi;
+					  mwd2_data_tx.inc = Inc;
+					  mwd2_data_tx.azi = Azi;
 					  mwd2_data_tx.update = 1;
             LED_R_OFF;
 						

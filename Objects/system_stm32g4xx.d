@@ -1,5 +1,5 @@
 ./objects/system_stm32g4xx.o: \
-  C:\Users\53433\Desktop\3hao\MEMS_Probe_hw02_V0.2_fw-20241208\RTE\Device\STM32G474VETx\STCubeGenerated\Src\system_stm32g4xx.c \
+  C:\Users\53433\Desktop\3hao\MEMS_Probe_hw02_V0.2_fw-20241212-XW(1)\MEMS_Probe_hw02_V0.2_fw-20241212-XW\RTE\Device\STM32G474VETx\STCubeGenerated\Src\system_stm32g4xx.c \
   RTE\_Target_1\Pre_Include_Global.h \
   C:\Users\53433\AppData\Local\Arm\Packs\Keil\STM32G4xx_DFP\1.5.0\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h \
   C:\Users\53433\AppData\Local\Arm\Packs\Keil\STM32G4xx_DFP\1.5.0\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g474xx.h \
