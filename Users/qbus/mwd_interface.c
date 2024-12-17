@@ -78,8 +78,8 @@ void Gen_MWD_Reply(void)
     else if (mwd2_data_tx.update == 1)
     {
         // GVA=0010;GVB=0020;RES=0050;RED=0100;GVC=0030;GVD=0120;
-        sprintf(str, "GV0=%.2f;GV1=%.2f;", (mwd2_data_tx.inc),
-                (mwd2_data_tx.azi)
+        sprintf(str, "GV0=%d;GV1=%d;", (int)((mwd2_data_tx.inc)*10), //GV1=%.2f;
+                (int)((mwd2_data_tx.azi)*10)
 			          );
               mwd2_data_tx.update = 0;
 				MWD_Tx_Length=GenQBUS_ReplyPack(QBUS_defaut_Client, QBUS_defaut_Server, str, MWD_Tx_Buffer);
