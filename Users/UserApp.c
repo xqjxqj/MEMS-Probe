@@ -111,18 +111,24 @@ short IncIndex=0;
 short GyroIndex=0;
 short flag=0;
 //地磁场:总场、地磁倾角、地磁偏角
-const float B=50000.0f;
+/*const float B=50000.0f;
 const float GeoI=30.0f/180.0f*PI;
 const float GeoD=0.0f/180.0f*PI;
-
+*/
+const float B=55116.5f;
+const float GeoI=59.83f/180.0f*PI;
+const float GeoD=-7.95f/180.0f*PI;
 //Bu=-B*sin(GeoI)
 //Bn=B*cos(GeoI)*cos(GeoD);
 //Be=B*cos(GeoI)*sin(GeoD);
+/*
 float Bu=-25000.0f;
 float Bn=43301.27f;
 float Be=0.0f;
-
-
+*/
+float Bu=-47650.28f;
+float Bn=27433.58f;
+float Be=-3831.12f;
 //用于粒子群
 const float e1 = 10000;
 const float e3 =10e-8;

@@ -3,17 +3,17 @@
         {
             "name": "Target 1",
             "includePath": [
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Users",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Users\\Driver",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Users\\Driver\\RV-3029-C2",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Users\\USB",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\USB_Device\\App",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\USB_Device\\Target",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Middlewares\\ST\\STM32_USB_Device_Library\\Class\\MSC\\Inc",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Middlewares\\ST\\STM32_USB_Device_Library\\Core\\Inc",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\Users\\qbus",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\RTE\\Device\\STM32G474VETx\\STCubeGenerated\\Src",
-                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241208\\RTE\\Device\\STM32G474VETx\\STCubeGenerated\\Inc"
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Users",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Users\\Driver",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Users\\Driver\\RV-3029-C2",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Users\\USB",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\USB_Device\\App",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\USB_Device\\Target",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Middlewares\\ST\\STM32_USB_Device_Library\\Class\\MSC\\Inc",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Middlewares\\ST\\STM32_USB_Device_Library\\Core\\Inc",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\Users\\qbus",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\RTE\\Device\\STM32G474VETx\\STCubeGenerated\\Src",
+                "d:\\04-code\\MEMS_Probe_hw02_V0.3_fw-20241208-currentTool\\MEMS_Probe_hw02_V0.2_fw-20241217\\RTE\\Device\\STM32G474VETx\\STCubeGenerated\\Inc"
             ],
             "defines": [
                 "__alignof__(x)=",
