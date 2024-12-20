@@ -642,7 +642,7 @@ __NO_RETURN void user_app_init(void *arg)
     // HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim1); // 开启ExtADC 定期采样
 		User_UART_Start(Huart1_Index);
-    Init_MWD_APP();
+    //Init_MWD_APP();
     while (1)
     {
         Get_RTC_DDHHMMSS(rtc_val);
@@ -823,15 +823,15 @@ __NO_RETURN void user_app_init(void *arg)
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (RawExtADCData[23] >> 8) & 0xff;
 								
                 //姿态角存入包头：？
-							
+				Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Inc*100)& 0xff;  // 井斜
+                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Inc*100)>> 8);  // 井斜
+                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Azi*100)& 0xff;  // 方位角
+                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Azi*100)>> 8);  // 方位角			
                 Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)(StaticToolface*100))& 0xff;  // 静态工具面角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)(StaticToolface*100))>> 8);  // 静态工具面角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)DynamicToolface*100)& 0xfff;  // 动态工具面角
                 Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)DynamicToolface*100)>> 8);  // 动态工具面角
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Inc*100)& 0xff;  // 井斜
-                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Inc*100)>> 8);  // 井斜
-                Flash_Wr_Buf[Flash_Wr_Offset++] = ((short)Azi*100)& 0xff;  // 方位角
-                Flash_Wr_Buf[Flash_Wr_Offset++] = (((short)Azi*100)>> 8);  // 方位角
+            
 							
                 //for git test,view
 								
