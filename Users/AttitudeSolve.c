@@ -43,9 +43,48 @@ void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
 
 void MagCalibrate(float *Mx,float *My,float *Mz,float temp){
 		//Temperature
-    float MagBias=temp*MagBiasPLiner[0]+MagBiasPLiner[1];
+		//for axi Z
+    /*float MagBias=temp*MagBiasPLiner[0]+MagBiasPLiner[1];
 		float MagScale=temp*MagScalePLiner[0]+MagScalePLiner[1];	
-	  *Mz=((*Mz-MagBias)*MagScale)*MagStrenthPLiner[0]+MagStrenthPLiner[1];	   
+	  *Mz=((*Mz-MagBias)*MagScale)*MagStrenthPLiner[0]+MagStrenthPLiner[1];	  
+*/
+       //for three axi
+	   //Temperature
+	float Mag[3]={*Mx,*My,*Mz};
+  float CalMag[3];
+	float Mag_K[3]={1496.9,2577.2,1121.2};
+	float Mag_M[3][3] = {{1.0801, 0, 0.0083},{-0.0048, 1.0796, -0.0244},{0, 0, 1.0304}};
+
+	//float Mag_K[3]={1121.2,2577.2,1496.9};
+	//float Mag_M[3][3] = {{-0.0083, 0, 1.0801},{0.0244, 1.0796,-0.0048, },{-1.0304,0, 0 }};
+	/*
+	if (temp<37.5f){
+	float Mag_K[3]={1.0,1.0,1.0};
+	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>37.5f&&temp<62.5f){
+	float Mag_K[3]={1.0,1.0,1.0};
+	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>62.5f&&temp<87.5f){
+	float Mag_K[3]={1.0,1.0,1.0};
+	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>87.5f&&temp<112.5f){
+	float Mag_K[3]={1.0,1.0,1.0};
+	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>112.5f){
+	float Mag_K[3]={1.0,1.0,1.0};
+	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}
+	*/
+	for (short i = 0; i < 3; i++) {
+        float diff = Mag[i] - Mag_K[i];
+        CalMag[i] = 0.0f;
+        for (short j = 0; j < 3; j++) {
+            CalMag[i] += diff * Mag_M[i][j];
+        }
+    }
+	*Mx=CalMag[0];
+	*My=CalMag[1];
+  *Mz=CalMag[2];	
 }
 
 //toolface
@@ -95,11 +134,14 @@ float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float A
 		return Azibefore;
 	}else{
 	  I=I*PI/180.0f;
-		float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		//float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		float temp =(-Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
 		if(temp>1) temp=1;
 		if(temp<-1) temp=-1;
-	  MagA=acos(temp)/PI*180.0;
-	  return MagA-DEC;
+	  //MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
+	 MagA=acos(temp)/PI*180.0;
+	  return MagA-DEC/PI*180.0;
+	 //return MagA;
 	}
 }
 

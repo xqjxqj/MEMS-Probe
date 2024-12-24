@@ -248,7 +248,7 @@ int main(void)
   SetMagGain(88, 6, 45, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
   SetMagGain(88, 6, 158, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
 
-//这里调用：改个函�?
+//这里调用：改个函�?
   Creat_user_app_init_task();
 
 //  EventRecorderInitialize(EventRecordAll, 1U);
