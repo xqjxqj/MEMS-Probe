@@ -135,13 +135,13 @@ float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float A
 	}else{
 	  I=I*PI/180.0f;
 		//float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
-		float temp =(-Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		float temp =(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
 		if(temp>1) temp=1;
 		if(temp<-1) temp=-1;
-	  //MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
-	 MagA=acos(temp)/PI*180.0;
-	  return MagA-DEC/PI*180.0;
-	 //return MagA;
+	  MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
+	 //MagA=acos(temp)/PI*180.0;
+	 // return MagA-DEC/PI*180.0;
+	 return MagA;
 	}
 }
 
