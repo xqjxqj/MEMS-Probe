@@ -41,8 +41,8 @@ void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
 	 //Temperature
 	float Acc[3]={*Ax,*Ay,*Az};
   float CalAcc[3];
-	float Acc_K[3]={1.0,1.0,1.0};
-	float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	float Acc_K[3]={-0.001780,0.034965,0.010843};
+	float Acc_M[3][3] = {{1.008104,0 , -0.00058439},{0.015108, 0.983994, 0.002423},{0, 0, 0.995965}};
 	/*
 	if (temp<37.5f){
 		float Acc_K[3]={1.0,1.0,1.0};
