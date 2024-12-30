@@ -27,10 +27,9 @@ Project File Date:  12/21/2024
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-compiling AttitudeSolve.c...
-compiling UserApp.c...
+compiling main.c...
 linking...
-Program Size: Code=177728 RO-data=6492 RW-data=616 ZI-data=126936  
+Program Size: Code=177816 RO-data=6492 RW-data=616 ZI-data=126936  
 ".\Objects\HT_Probe_0_2.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -118,44 +117,44 @@ Package Vendor: Keil
    * Component: ::Device:STM32Cube Framework:1.1.0 (API)
 
    * Component: ARM::CMSIS Driver:USB Device:Custom:1.0.0
-      Source file:   CMSIS/Driver/DriverTemplates/Driver_USBD.c
       Include file:  CMSIS/Driver/Include/Driver_USBD.h
+      Source file:   CMSIS/Driver/DriverTemplates/Driver_USBD.c
 
    * Component: ARM::CMSIS:CORE:5.6.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Source:5.5.4
       Include file:  CMSIS/RTOS2/RTX/Include/rtx_os.h
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_system.c
-      Source file:   CMSIS/RTOS2/RTX/Template/main.c
-      Source file:   CMSIS/RTOS2/RTX/Template/svc_user.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_semaphore.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_msgqueue.c
-      Source file:   CMSIS/RTOS2/RTX/Config/RTX_Config.c
+      Source file:   CMSIS/RTOS2/RTX/Template/MemPool.c
       Source file:   CMSIS/RTOS2/RTX/Template/Mutex.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_thread.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_memory.c
       Source file:   CMSIS/RTOS2/RTX/Source/rtx_lib.c
+      Source file:   CMSIS/RTOS2/RTX/Template/Timer.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_delay.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_timer.c
+      Source file:   CMSIS/RTOS2/RTX/Template/MsgQueue.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_thread.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_semaphore.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_mempool.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_msgqueue.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_system.c
       Source file:   CMSIS/RTOS2/RTX/Source/rtx_evr.c
       Include file:  CMSIS/RTOS2/RTX/Config/RTX_Config.h
-      Source file:   CMSIS/RTOS2/RTX/Template/Semaphore.c
-      Source file:   CMSIS/RTOS2/RTX/Template/MemPool.c
       Source file:   CMSIS/RTOS2/RTX/Template/Thread.c
+      Source file:   CMSIS/RTOS2/RTX/Template/main.c
       Source file:   CMSIS/RTOS2/RTX/Template/Events.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_delay.c
       Source file:   CMSIS/RTOS2/RTX/Source/rtx_kernel.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_evflags.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_mempool.c
-      Source file:   CMSIS/RTOS2/RTX/Template/MsgQueue.c
-      Source file:   CMSIS/RTOS2/RTX/Template/Timer.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_timer.c
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_mutex.c
+      Source file:   CMSIS/RTOS2/RTX/Template/Semaphore.c
       Source file:   CMSIS/RTOS2/RTX/Source/GCC/irq_armv7m.S
-      Source file:   CMSIS/RTOS2/RTX/Source/rtx_memory.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_mutex.c
+      Source file:   CMSIS/RTOS2/RTX/Source/rtx_evflags.c
+      Source file:   CMSIS/RTOS2/RTX/Template/svc_user.c
+      Source file:   CMSIS/RTOS2/RTX/Config/RTX_Config.c
       Source file:   CMSIS/RTOS2/Source/os_systick.c
 
    * Component: Keil.ARM Compiler::Compiler:Event Recorder:DAP:1.5.1
-      Include file:  Include/EventRecorder.h
-      Source file:   Source/EventRecorder.c
       Include file:  Config/EventRecorderConf.h
+      Source file:   Source/EventRecorder.c
+      Include file:  Include/EventRecorder.h
 
    * Component: Keil.ARM Compiler::Compiler:I/O:File:File System:1.2.0
       Source file:   Source/retarget_io.c
@@ -164,10 +163,10 @@ Package Vendor: Keil
       Source file:   Source/retarget_io.c
 
    * Component: Keil.MDK-Plus::File System:CORE:LFN Debug:6.15.0
-      Source file:   FileSystem/Config/FS_Debug.c
+      Library file:  FileSystem/Lib/ARM/FS_Dbg_LFN_CM3_L.lib
       Source file:   FileSystem/Config/FS_Config.c
       Include file:  FileSystem/Include/rl_fs.h
-      Library file:  FileSystem/Lib/ARM/FS_Dbg_LFN_CM3_L.lib
+      Source file:   FileSystem/Config/FS_Debug.c
 
    * Component: Keil.MDK-Plus::File System:Drive:NAND:6.15.0
       Include file:  FileSystem/Config/FS_Config_NAND.h
@@ -184,111 +183,111 @@ Package Vendor: Keil
 
    * Component: Keil.MDK-Plus::USB:Device:MSC:6.16.0
       Source file:   USB/Template/USBD_User_MSC.c
-      Source file:   USB/Template/USBD_MSC.h
-      Source file:   USB/Template/USBD_User_MSC_LUN.c
-      Include file:  USB/Config/USBD_Config_MSC.h
       Source file:   USB/Template/USBD_MSC.c
+      Include file:  USB/Config/USBD_Config_MSC.h
+      Source file:   USB/Template/USBD_User_MSC_LUN.c
+      Source file:   USB/Template/USBD_MSC.h
 
    * Component: Keil.STM32CubeMX::Device:STM32Cube Framework:STM32CubeMX:1.4.0
-      Include file:  STCubeGenerated/Inc/stm32g4xx_hal_conf.h
       Include file:  MX_Device.h
+      Include file:  STCubeGenerated/Inc/stm32g4xx_hal_conf.h
       Source file:   STCubeGenerated/Src/stm32g4xx_hal_msp.c
 
    * Component: Keil.STM32CubeMX::Device:STM32Cube HAL:1.4.0
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cryp_ex.c
+      Source file:   MDK/Driver/stm32g4xx_ll.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_comp.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cordic.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dac.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cryp.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dac_ex.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cryp.c
-      Source file:   MDK/Driver/stm32g4xx_ll.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dac.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sai.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_nor.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sai_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2c_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cordic.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_lptim.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ramfunc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp_ex.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_hrtim.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_iwdg.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_qspi.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_fdcan.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sai.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rtc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_fmac.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smartcard.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_nor.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2c.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smartcard_ex.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_irda.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rtc_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2s.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_nand.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_iwdg.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_exti.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_fmac.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_hrtim.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_fdcan.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ramfunc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2c.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_lptim.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pcd_ex.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_qspi.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc_ex.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rng.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rtc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_spi_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_adc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_rtc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smbus_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_lpuart.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_cordic.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_dac.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smbus.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_spi.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_exti.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_comp.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_crc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_fmac.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim_ex.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sram.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_crs.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rtc_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_exti.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sai_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_nand.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2s.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2c_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_dma.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_gpio.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_exti.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_spi_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_fmac.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_hrtim.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_lptim.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_i2c.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_opamp.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_adc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_crc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_lpuart.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_crs.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_pwr.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_wwdg.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_rcc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_fmc.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_rng.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_spi.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_ucpd.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_rtc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_spi.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_comp.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_fmc.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_dac.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_gpio.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_lptim.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smbus.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_opamp.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_smbus_ex.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_wwdg.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_sram.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_cordic.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_utils.c
-      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_usart.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_tim.c
       Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_usb.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_spi.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_ucpd.c
+      Source file:   Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_usart.c
 
    * Component: Keil.STM32CubeMX::Device:Startup:1.4.0
-      Source file:   STCubeGenerated/MDK-ARM/startup_stm32g474xx.s
       Source file:   STCubeGenerated/Src/system_stm32g4xx.c
+      Source file:   STCubeGenerated/MDK-ARM/startup_stm32g474xx.s
 
    * Component: Keil::CMSIS Driver:NAND:Memory Bus:1.1.0
-      Source file:   NAND/NAND_MemBus.c
       Include file:  Config/NAND_MemBus_Config.h
-Build Time Elapsed:  00:00:03
+      Source file:   NAND/NAND_MemBus.c
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

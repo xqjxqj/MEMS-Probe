@@ -244,9 +244,9 @@ int main(void)
   //SetMagGain(117, 6, 104, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
 
 //#1
-  SetMagGain(88, 6, 158, MagCH0); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Z,yan tan guan 5 120
-  SetMagGain(88, 6, 45, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
-  SetMagGain(88, 6, 158, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
+  SetMagGain(88, 6, 100, MagCH0); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Z,yan tan guan 5 120
+  SetMagGain(46, 6, 120, MagCH1); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V    //Y
+  SetMagGain(46, 6, 100, MagCH2); // Gain1 = 5.001 Gain2 = 160,Voffset = (127+0.5)/256 *5=2.5V  //X
 
 //这里调用：改个函�?
   Creat_user_app_init_task();

@@ -469,28 +469,25 @@ void ConvertExtADC(void)
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
     // fDiffAccData.AccHxP = ftmp;
     fDiffAccData.AccHxP = ftmp;//xqj
-    // HR1_Y  -356B_1_Z y加速度1
+    // HR1_Y  356B_1_Z y加速度1
     ftmp = RawExtADCData[1];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
-    fDiffAccData.AccHyP = 0 - ftmp;
+    fDiffAccData.AccHyP = ftmp;
     //fDiffAccData.AccHyP =  ftmp;//xqj
     // HR1_Z  -356B_1_Y z加速度1
     ftmp = RawExtADCData[2];
-    // ftmp = (ftmp / 32768.0f * 2500.0f + 2500.0f  - 900.0f) / 80.0f;
-    // ftmp = ftmp / 1048.576f + 20.0f;
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRPRef) / 80.0f;
     // fDiffAccData.AccHzP = 0 - ftmp;
     fDiffAccData.AccHzP = 0-ftmp;//xqj
     // HR2_X  -356B_2_Y x加速度2
     ftmp = RawExtADCData[3];
-    //fDiffAccData.AccHxN = ftmp;
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRNRef) / 80.0f;
     fDiffAccData.AccHxN = 0 - ftmp;
     //fDiffAccData.AccHxN =  ftmp;
-    // HR2_Y  356B_2_Z y加速度2
+    // HR2_Y  -356B_2_Z y加速度2
     ftmp = RawExtADCData[4];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.AccHRNRef) / 80.0f;
-    fDiffAccData.AccHyN =  ftmp;//???
+    fDiffAccData.AccHyN = 0- ftmp;
      //fDiffAccData.AccHyN =  ftmp; //XQJ
     // HR2_Z  356B_2_X z加速度2
     ftmp = RawExtADCData[5];
@@ -501,8 +498,7 @@ void ConvertExtADC(void)
     // MAG_X
     ftmp = RawExtADCData[8];
     ftmp = ftmp * 1.907f;
-    fMagData.MagZ = 0 - ftmp;
-   // fMagData.MagZ = ftmp;//xqj
+    fMagData.MagZ = ftmp;
     // MAG_Y
     ftmp = RawExtADCData[9];
     ftmp = ftmp * 1.907f;
@@ -517,7 +513,7 @@ void ConvertExtADC(void)
     // LR1_X -354_1_Z  x加速度3
     ftmp = RawExtADCData[11];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLRPRef) / 400.0f;
-    fDiffAccData.AccLxP = 0 - ftmp;
+    fDiffAccData.AccLxP = ftmp;
      //fDiffAccData.AccLxP =  ftmp;//XQJ
     // LR1_Y -354_1_X y加速度3
     ftmp = RawExtADCData[12];
@@ -534,7 +530,7 @@ void ConvertExtADC(void)
     // LR2_X  354_2_Z
     ftmp = RawExtADCData[14];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLRNRef) / 400.0f;
-    fDiffAccData.AccLxN = ftmp;
+    fDiffAccData.AccLxN = 0-ftmp;
      //fDiffAccData.AccLxN = 0 - ftmp;//XQJ
     // LR2_Y 354_2_Y
     ftmp = RawExtADCData[15];
@@ -546,37 +542,44 @@ void ConvertExtADC(void)
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLRNRef) / 400.0f;
     fDiffAccData.AccLzN = ftmp;
     //fDiffAccData.AccLzN = 0 - ftmp;//xqj
-    // LR 45
-    // LR3_X -354_3_Z
+    //
+
+    // LR 45//////////////////////////////////////////////////////////////////////////////
+    //////     45
+    //////////////////////////////////////////////////////////////////////////////////////
+    // LR3_X 354_3_Z
     ftmp = RawExtADCData[17];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45PRef) / 400.0f;
-    fDiffAccData.AccL45xP = 0 - ftmp;
-   // fDiffAccData.AccL45xP =  ftmp;//XQJ
+    fDiffAccData.AccL45xP = ftmp;
     // LR3_Y*  354_3_Y
     ftmp = RawExtADCData[18];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45PRef) / 400.0f;
     fDiffAccData.AccL45yP = ftmp;
-    //fDiffAccData.AccL45yP = 0 - ftmp;//XQJ
     // LR3_Z*  354_3_X
     ftmp = RawExtADCData[19];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45PRef) / 400.0f;
-    fDiffAccData.AccL45zP = ftmp;//XQJ
-    //fDiffAccData.AccL45zP = 0 - ftmp;
+    fDiffAccData.AccL45zP = ftmp;
+    //
+    fDiffAccData.AccL45yP = fDiffAccData.AccL45yP*0.707107f - fDiffAccData.AccL45zP*0.707107f;
+    fDiffAccData.AccL45zP = - (fDiffAccData.AccL45yP + fDiffAccData.AccL45zP)*0.707107f;
+    // LR 45//////////////////////////////////////////////////////////////////////////////
+    //////     45
+    //////////////////////////////////////////////////////////////////////////////////////
     // LR4_X  354_4_Z
     ftmp = RawExtADCData[20];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
-    fDiffAccData.AccL45xN = ftmp;
-    //fDiffAccData.AccL45xN = 0-ftmp;//XQJ
+    fDiffAccData.AccL45xN = -ftmp;
     // LR4_Y*  354_4_X
     ftmp = RawExtADCData[21];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
     fDiffAccData.AccL45yN = ftmp;
-    //fDiffAccData.AccL45yN =0- ftmp;//xqj
     // LR4_Z*  354_4_Y
     ftmp = RawExtADCData[22];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref - AccSensorRef.AccLR45NRef) / 400.0f;
     fDiffAccData.AccL45zN = ftmp;
-    //fDiffAccData.AccL45zN = 0 - ftmp;//xqj
+
+    fDiffAccData.AccL45yN = fDiffAccData.AccL45zN*0.707107f - fDiffAccData.AccL45yN*0.707107f;
+    fDiffAccData.AccL45zN = (fDiffAccData.AccL45zN + fDiffAccData.AccL45yN)*0.707107f;
     // current
     ftmp = RawExtADCData[23];
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_B_Ref + AccSensorRef.ADC_B_Ref);

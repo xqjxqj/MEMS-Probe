@@ -106,12 +106,13 @@ uint32_t Storage_Init(char *Drivename)
 	/* Initialize and mount drive "M0" */
 	stat = finit(Drivename);
 	//擦除XQJ
-	
-	/*for(i=0;i<NAND0_BLOCK_COUNT;i++)
+	/*
+	for(i=0;i<NAND0_BLOCK_COUNT;i++)
 				FlashEraseBlock(i);
 			
 			stat = fformat(Drivename, "/L WellLine /FAT32");
 	*/
+	///////////////////////////
 	if (stat == fsOK)
 	{
 		stat = fmount(Drivename);
