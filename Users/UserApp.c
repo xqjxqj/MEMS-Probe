@@ -700,7 +700,7 @@ __NO_RETURN void user_app_init(void *arg)
 				  	//Normalization(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,B);
             // 数据校正：
             gyroRotation(&fRotate,fTemperature); // 陀螺转速校正
-				  	//加速度计校正，这里使用AccLP加速度组，即第三组，其他组暂时用不用
+				  	//加速度计校正，这里使用AccLP加速度组，即第三组，其他组暂时用不用，之后需要用椭球拟合
 					  AccCalibrate(&fDiffAccData.AccLxP,&fDiffAccData.AccLyP,&fDiffAccData.AccLzP,fTemperature,3);
 					  //磁校正
 					  MagCalibrate(&fMagData.MagX,&fMagData.MagY,&fMagData.MagZ,fTemperature);
