@@ -35,9 +35,42 @@ void gyroRotation(float *gyrov,float temp){
 }
 
 void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
-		float AccBias=temp*AccBiasPLiner[0]+AccBiasPLiner[1];
+		/*float AccBias=temp*AccBiasPLiner[0]+AccBiasPLiner[1];
 		float AccScale=temp*AccScalePLiner[0]+AccScalePLiner[1];	
-	  *Az=(*Az-AccBias)*AccScale;
+	  *Az=(*Az-AccBias)*AccScale;*/
+	 //Temperature
+	float Acc[3]={*Ax,*Ay,*Az};
+  float CalAcc[3];
+	float Acc_K[3]={1.0,1.0,1.0};
+	float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	/*
+	if (temp<37.5f){
+		float Acc_K[3]={1.0,1.0,1.0};
+		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>37.5f&&temp<62.5f){
+		float Acc_K[3]={1.0,1.0,1.0};
+		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>62.5f&&temp<87.5f){
+		float Acc_K[3]={1.0,1.0,1.0};
+		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>87.5f&&temp<112.5f){
+		float Acc_K[3]={1.0,1.0,1.0};
+		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}else if(temp>112.5f){
+		float Acc_K[3]={1.0,1.0,1.0};
+		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
+	}
+	*/
+	for (short i = 0; i < 3; i++) {
+        float diff = Acc[i] - Acc_K[i];
+        CalAcc[i] = 0.0f;
+        for (short j = 0; j < 3; j++) {
+            CalAcc[i] += diff * Acc_M[i][j];
+        }
+    }
+	*Ax=CalAcc[0];
+	*Ay=CalAcc[1];
+  *Az=CalAcc[2];		
 	 
 }
 
