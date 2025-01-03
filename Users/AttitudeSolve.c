@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: sueRimn
+ * @Date: 2024-12-21 16:03:24
+ * @LastEditors: sueRimn
+ * @LastEditTime: 2024-12-30 16:16:20
+ */
  /**
  * @file Untitled-1
  * @brief
@@ -41,8 +49,8 @@ void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
 	 //Temperature
 	float Acc[3]={*Ax,*Ay,*Az};
   float CalAcc[3];
-	float Acc_K[3]={-0.001780,0.034965,0.010843};
-	float Acc_M[3][3] = {{1.008104,0 , -0.00058439},{0.015108, 0.983994, 0.002423},{0, 0, 0.995965}};
+	float Acc_K[3]={-0.00146688,0.034965,0.00991855};
+	float Acc_M[3][3] = {{1.008311,0 , -0.00632525},{0.00075078, 0.9766324, -0.000602547},{0, 0, 0.994549076}};
 	/*
 	if (temp<37.5f){
 		float Acc_K[3]={1.0,1.0,1.0};
@@ -70,7 +78,7 @@ void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
     }
 	*Ax=CalAcc[0];
 	*Ay=CalAcc[1];
-  *Az=CalAcc[2];		
+    *Az=CalAcc[2];		
 	 
 }
 
@@ -84,9 +92,9 @@ void MagCalibrate(float *Mx,float *My,float *Mz,float temp){
        //for three axi
 	   //Temperature
 	float Mag[3]={*Mx,*My,*Mz};
-  float CalMag[3];
-	float Mag_K[3]={1496.9,2577.2,1121.2};
-	float Mag_M[3][3] = {{1.0801, 0, 0.0083},{-0.0048, 1.0796, -0.0244},{0, 0, 1.0304}};
+    float CalMag[3];
+	float Mag_K[3]={-779.2379,-1324.50,7660.8};
+	float Mag_M[3][3] = {{1.112263, 0, -0.0176541},{-0.030699, 1.361851, -0.23324705},{0, 0, 1.3292915}};
 
 	//float Mag_K[3]={1121.2,2577.2,1496.9};
 	//float Mag_M[3][3] = {{-0.0083, 0, 1.0801},{0.0244, 1.0796,-0.0048, },{-1.0304,0, 0 }};

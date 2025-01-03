@@ -707,7 +707,7 @@ __NO_RETURN void user_app_init(void *arg)
 					
 
 					  //姿态角解算
-					  if (fRotate<20.0f&&fRotate>-20.0f){
+					  if (fRotate<80.0f&&fRotate>-80.0f){
 								//静态
 							StaticToolface=GravityToolface(fDiffAccData.AccLxP,fDiffAccData.AccLyP);
 							DynamicToolface=StaticToolface;
