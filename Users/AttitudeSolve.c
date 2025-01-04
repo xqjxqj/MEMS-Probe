@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2024-12-21 16:03:24
  * @LastEditors: sueRimn
- * @LastEditTime: 2024-12-30 16:16:20
+ * @LastEditTime: 2025-01-03 14:52:47
  */
  /**
  * @file Untitled-1
@@ -186,4 +186,64 @@ float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float A
 	}
 }
 
+//xqj add Inc,Azi,TF
+//toolface
+/*
+float GravityToolface_1(float gx,float gy){
+	float angle; 
+	if(gx>1) gx=1;
+	if(gx<-1) gx=-1;
+	if(gy>1) gy=1;
+	if(gy<-1) gy=-1;
+    if (gx == 0.0f && gy == 0.0f) {  
+        angle = NAN; 
+    } else if (gy == 0.0f) {          
+        angle = (gx > 0.0f) ? 90.0f : 270.0f;  
+    } else {         
+        angle = atan2f(gy, gx) * 180.0f / PI; 
+        if (angle < 0.0f) {  
+            angle += 360.0f;  
+        }  
+    }  
+    return angle; 
+	}
 
+//inc
+float calculateInclination_1(float gx, float gy, float gz) {  
+   
+   // if (gz == 0) gz = 1e-6;  
+   // float angleRadians = atan2(sqrt(gx*gx + gy*gy), gz);   
+   // float angleDegrees = angleRadians * (180.0 / PI);  
+	if(gz>1) gz=1;
+	if(gz<-1) gz=-1;
+	float angleRadians = acos(gz); 
+  float angleDegrees = angleRadians * (180.0 / PI); 
+	return angleDegrees;  
+} 
+
+// calculate dynamic toolface
+float calculateCurrentAngle_1(float startAngle, float changeAngle) {  
+    float currentAngle = fmod(startAngle + changeAngle, 360.0f); 
+    if (currentAngle < 0.0f) {
+        currentAngle += 360.0f;  
+    }  
+    return currentAngle;  
+} 
+
+float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float Azibefore){
+	float MagA;
+	if(I==0.0f){
+		return Azibefore;
+	}else{
+	  I=I*PI/180.0f;
+		//float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		float temp =(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		if(temp>1) temp=1;
+		if(temp<-1) temp=-1;
+	  MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
+	 //MagA=acos(temp)/PI*180.0;
+	 // return MagA-DEC/PI*180.0;
+	 return MagA;
+	}
+}
+*/
