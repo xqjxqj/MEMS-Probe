@@ -4,8 +4,9 @@
  * @Author: sueRimn
  * @Date: 2024-12-17 15:47:45
  * @LastEditors: sueRimn
- * @LastEditTime: 2025-01-03 14:50:03
+ * @LastEditTime: 2025-01-06 23:13:45
  */
+
 /**
  * @file Untitled-1
  * @brief
@@ -30,7 +31,8 @@ float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float A
 
 //xqj
 float GravityToolface_1(float gx,float gy);
+float MagToolface_1(float Bx,float By);
 float calculateInclination_1(float gx, float gy, float gz);
-float calculateAzi_1(float I,float Be,float Bn,float Bu,float Mz,float DEC,float Azibefore);
+float calculateAzi_1(float Bx, float By, float Bz, float I, float T, float a);
 //float slidingAverageFilter(float newMeasurement, float *HistorySum, int *index, float oldMeasurement,float result,int flag);
 #endif // __AttitudeSolve_H_

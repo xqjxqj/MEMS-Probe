@@ -1,12 +1,12 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: sueRimn
  * @Date: 2024-12-21 16:03:24
  * @LastEditors: sueRimn
- * @LastEditTime: 2025-01-03 14:52:47
+ * @LastEditTime: 2025-01-09 10:34:56
  */
- /**
+/**
  * @file Untitled-1
  * @brief
  * @author weikanggui
@@ -14,43 +14,46 @@
  * @date 2024-06-18
  * @copyright Copyright (c) 2024  CAS
  ****************************************************/
-#define DECIMAL_FACTOR 10000   
+#define DECIMAL_FACTOR 10000
 #define PI 3.14159265358979323846f
 #include "AttitudeSolve.h"
-#include <stdio.h>  
+#include <stdio.h>
 #include <math.h>
 // correction coefficient
-volatile float GyroBiasPLiner[2]={-0.30237,-18.2};
-volatile float AccBiasPLiner[2]={3.0164e-05,0.0342};
-volatile float MagBiasPLiner[2]={-1.4492,1677.4};
-volatile float AccScalePLiner[2]={-1.2562e-05,1.017};
-volatile float MagScalePLiner[2]={0.00421,1.1963};
-volatile float MagStrenthPLiner[2]={0.95563,1861.1};
-//Split a float into its integer and fractional parts represented as two short integers
-void splitFloat(float value, volatile short *intPart, volatile short *decimalPart) {  
-    // integer part
-    *intPart = (short)value;      
-    // round to 4 decimal places(DECIMAL_FACTOR)  
-    *decimalPart = (short)(roundf((value - *intPart) * DECIMAL_FACTOR));  
-} 
-
-//Calculating the change of toolface angle based on gyro measurements
-
-void gyroRotation(float *gyrov,float temp){
-	 float GyroBias=temp*GyroBiasPLiner[0]+GyroBiasPLiner[1];
-	 *gyrov-=GyroBias;
-	//gyrov = (gyrov-Static)/(GyroCal1)-GyroCal2;
+volatile float GyroBiasPLiner[2] = {-0.30237, -18.2};
+volatile float AccBiasPLiner[2] = {3.0164e-05, 0.0342};
+volatile float MagBiasPLiner[2] = {-1.4492, 1677.4};
+volatile float AccScalePLiner[2] = {-1.2562e-05, 1.017};
+volatile float MagScalePLiner[2] = {0.00421, 1.1963};
+volatile float MagStrenthPLiner[2] = {0.95563, 1861.1};
+// Split a float into its integer and fractional parts represented as two short integers
+void splitFloat(float value, volatile short *intPart, volatile short *decimalPart)
+{
+	// integer part
+	*intPart = (short)value;
+	// round to 4 decimal places(DECIMAL_FACTOR)
+	*decimalPart = (short)(roundf((value - *intPart) * DECIMAL_FACTOR));
 }
 
-void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
-		/*float AccBias=temp*AccBiasPLiner[0]+AccBiasPLiner[1];
-		float AccScale=temp*AccScalePLiner[0]+AccScalePLiner[1];	
-	  *Az=(*Az-AccBias)*AccScale;*/
-	 //Temperature
-	float Acc[3]={*Ax,*Ay,*Az};
-  float CalAcc[3];
-	float Acc_K[3]={-0.00146688,0.034965,0.00991855};
-	float Acc_M[3][3] = {{1.008311,0 , -0.00632525},{0.00075078, 0.9766324, -0.000602547},{0, 0, 0.994549076}};
+// Calculating the change of toolface angle based on gyro measurements
+
+void gyroRotation(float *gyrov, float temp)
+{
+	float GyroBias = temp * GyroBiasPLiner[0] + GyroBiasPLiner[1];
+	*gyrov -= GyroBias;
+	// gyrov = (gyrov-Static)/(GyroCal1)-GyroCal2;
+}
+
+void AccCalibrate(float *Ax, float *Ay, float *Az, float temp, short group)
+{
+	/*float AccBias=temp*AccBiasPLiner[0]+AccBiasPLiner[1];
+	float AccScale=temp*AccScalePLiner[0]+AccScalePLiner[1];
+  *Az=(*Az-AccBias)*AccScale;*/
+	// Temperature
+	float Acc[3] = {*Ax, *Ay, *Az};
+	float CalAcc[3];
+	float Acc_K[3] = {-0.00146688, 0.034965, 0.00991855};
+	float Acc_M[3][3] = {{1.008311, 0, -0.00632525}, {0.00075078, 0.9766324, -0.000602547}, {0, 0, 0.994549076}};
 	/*
 	if (temp<37.5f){
 		float Acc_K[3]={1.0,1.0,1.0};
@@ -69,35 +72,37 @@ void AccCalibrate(float *Ax,float *Ay,float *Az,float temp,short group){
 		float Acc_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
 	}
 	*/
-	for (short i = 0; i < 3; i++) {
-        float diff = Acc[i] - Acc_K[i];
-        CalAcc[i] = 0.0f;
-        for (short j = 0; j < 3; j++) {
-            CalAcc[i] += diff * Acc_M[i][j];
-        }
-    }
-	*Ax=CalAcc[0];
-	*Ay=CalAcc[1];
-    *Az=CalAcc[2];		
-	 
+	for (short i = 0; i < 3; i++)
+	{
+		float diff = Acc[i] - Acc_K[i];
+		CalAcc[i] = 0.0f;
+		for (short j = 0; j < 3; j++)
+		{
+			CalAcc[i] += diff * Acc_M[i][j];
+		}
+	}
+	*Ax = CalAcc[0];
+	*Ay = CalAcc[1];
+	*Az = CalAcc[2];
 }
 
-void MagCalibrate(float *Mx,float *My,float *Mz,float temp){
-		//Temperature
-		//for axi Z
-    /*float MagBias=temp*MagBiasPLiner[0]+MagBiasPLiner[1];
-		float MagScale=temp*MagScalePLiner[0]+MagScalePLiner[1];	
-	  *Mz=((*Mz-MagBias)*MagScale)*MagStrenthPLiner[0]+MagStrenthPLiner[1];	  
+void MagCalibrate(float *Mx, float *My, float *Mz, float temp)
+{
+	// Temperature
+	// for axi Z
+	/*float MagBias=temp*MagBiasPLiner[0]+MagBiasPLiner[1];
+		float MagScale=temp*MagScalePLiner[0]+MagScalePLiner[1];
+	  *Mz=((*Mz-MagBias)*MagScale)*MagStrenthPLiner[0]+MagStrenthPLiner[1];
 */
-       //for three axi
-	   //Temperature
-	float Mag[3]={*Mx,*My,*Mz};
-    float CalMag[3];
-	float Mag_K[3]={-779.2379,-1324.50,7660.8};
-	float Mag_M[3][3] = {{1.112263, 0, -0.0176541},{-0.030699, 1.361851, -0.23324705},{0, 0, 1.3292915}};
+	// for three axi
+	// Temperature
+	float Mag[3] = {*Mx, *My, *Mz};
+	float CalMag[3];
+	float Mag_K[3] = {-779.2379, -1324.50, 7660.8};
+	float Mag_M[3][3] = {{1.112263, 0, -0.0176541}, {-0.030699, 1.361851, -0.23324705}, {0, 0, 1.3292915}};
 
-	//float Mag_K[3]={1121.2,2577.2,1496.9};
-	//float Mag_M[3][3] = {{-0.0083, 0, 1.0801},{0.0244, 1.0796,-0.0048, },{-1.0304,0, 0 }};
+	// float Mag_K[3]={1121.2,2577.2,1496.9};
+	// float Mag_M[3][3] = {{-0.0083, 0, 1.0801},{0.0244, 1.0796,-0.0048, },{-1.0304,0, 0 }};
 	/*
 	if (temp<37.5f){
 	float Mag_K[3]={1.0,1.0,1.0};
@@ -116,134 +121,217 @@ void MagCalibrate(float *Mx,float *My,float *Mz,float temp){
 	float Mag_M[3][3] = {{1.0, 2.0, 3.0},{4.0, 5.0, 6.0},{7.0, 8.0, 9.0}};
 	}
 	*/
-	for (short i = 0; i < 3; i++) {
-        float diff = Mag[i] - Mag_K[i];
-        CalMag[i] = 0.0f;
-        for (short j = 0; j < 3; j++) {
-            CalMag[i] += diff * Mag_M[i][j];
-        }
-    }
-	*Mx=CalMag[0];
-	*My=CalMag[1];
-  *Mz=CalMag[2];	
+	for (short i = 0; i < 3; i++)
+	{
+		float diff = Mag[i] - Mag_K[i];
+		CalMag[i] = 0.0f;
+		for (short j = 0; j < 3; j++)
+		{
+			CalMag[i] += diff * Mag_M[i][j];
+		}
+	}
+	*Mx = CalMag[0];
+	*My = CalMag[1];
+	*Mz = CalMag[2];
 }
 
-//toolface
-float GravityToolface(float gx,float gy){
-	  float angle; 
-	  if(gx>1) gx=1;
-	  if(gx<-1) gx=-1;
-		if(gy>1) gy=1;
-	  if(gy<-1) gy=-1;
-    if (gx == 0.0f && gy == 0.0f) {  
-        angle = NAN; 
-    } else if (gy == 0.0f) {          
-        angle = (gx > 0.0f) ? 90.0f : 270.0f;  
-    } else {         
-        angle = atan2f(gy, gx) * 180.0f / PI; 
-        if (angle < 0.0f) {  
-            angle += 360.0f;  
-        }  
-    }  
-    return angle; }
+// toolface
+float GravityToolface(float gx, float gy)
+{
+	float angle;
+	if (gx > 1)
+		gx = 1;
+	if (gx < -1)
+		gx = -1;
+	if (gy > 1)
+		gy = 1;
+	if (gy < -1)
+		gy = -1;
+	if (gx == 0.0f && gy == 0.0f)
+	{
+		angle = NAN;
+	}
+	else if (gy == 0.0f)
+	{
+		angle = (gx > 0.0f) ? 90.0f : 270.0f;
+	}
+	else
+	{
+		angle = atan2f(gy, gx) * 180.0f / PI;
+		if (angle < 0.0f)
+		{
+			angle += 360.0f;
+		}
+	}
+	return angle;
+}
 
-//inc
-float calculateInclination(float gx, float gy, float gz) {  
-   
-   // if (gz == 0) gz = 1e-6;  
-   // float angleRadians = atan2(sqrt(gx*gx + gy*gy), gz);   
-   // float angleDegrees = angleRadians * (180.0 / PI);  
-	if(gz>1) gz=1;
-	if(gz<-1) gz=-1;
-	float angleRadians = acos(gz); 
-  float angleDegrees = angleRadians * (180.0 / PI); 
-	return angleDegrees;  
-} 
+// inc
+float calculateInclination(float gx, float gy, float gz)
+{
+
+	// if (gz == 0) gz = 1e-6;
+	// float angleRadians = atan2(sqrt(gx*gx + gy*gy), gz);
+	// float angleDegrees = angleRadians * (180.0 / PI);
+	if (gz > 1)
+		gz = 1;
+	if (gz < -1)
+		gz = -1;
+	float angleRadians = acos(gz);
+	float angleDegrees = angleRadians * (180.0 / PI);
+	return angleDegrees;
+}
 
 // calculate dynamic toolface
-float calculateCurrentAngle(float startAngle, float changeAngle) {  
-    float currentAngle = fmod(startAngle + changeAngle, 360.0f); 
-    if (currentAngle < 0.0f) {
-        currentAngle += 360.0f;  
-    }  
-    return currentAngle;  
-} 
+float calculateCurrentAngle(float startAngle, float changeAngle)
+{
+	float currentAngle = fmod(startAngle + changeAngle, 360.0f);
+	if (currentAngle < 0.0f)
+	{
+		currentAngle += 360.0f;
+	}
+	return currentAngle;
+}
 
-float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float Azibefore){
+float calculateAzi(float I, float Be, float Bn, float Bu, float Mz, float DEC, float Azibefore)
+{
 	float MagA;
-	if(I==0.0f){
+	if (I == 0.0f)
+	{
 		return Azibefore;
-	}else{
-	  I=I*PI/180.0f;
-		//float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
-		float temp =(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
-		if(temp>1) temp=1;
-		if(temp<-1) temp=-1;
-	  MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
-	 //MagA=acos(temp)/PI*180.0;
-	 // return MagA-DEC/PI*180.0;
-	 return MagA;
+	}
+	else
+	{
+		I = I * PI / 180.0f;
+		// float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
+		float temp = (Mz + cos(I) * Bu) / (sin(I) * sqrt(Be * Be + Bn * Bn));
+		if (temp > 1)
+			temp = 1;
+		if (temp < -1)
+			temp = -1;
+		MagA = acos(temp) / PI * 180.0 - atan(Be / Bn) / PI * 180.0;
+		// MagA=acos(temp)/PI*180.0;
+		//  return MagA-DEC/PI*180.0;
+		return MagA;
 	}
 }
 
-//xqj add Inc,Azi,TF
-//toolface
-/*
-float GravityToolface_1(float gx,float gy){
-	float angle; 
-	if(gx>1) gx=1;
-	if(gx<-1) gx=-1;
-	if(gy>1) gy=1;
-	if(gy<-1) gy=-1;
-    if (gx == 0.0f && gy == 0.0f) {  
-        angle = NAN; 
-    } else if (gy == 0.0f) {          
-        angle = (gx > 0.0f) ? 90.0f : 270.0f;  
-    } else {         
-        angle = atan2f(gy, gx) * 180.0f / PI; 
-        if (angle < 0.0f) {  
-            angle += 360.0f;  
-        }  
-    }  
-    return angle; 
-	}
+// xqj add Inc,Azi,TF
+// toolface
 
-//inc
-float calculateInclination_1(float gx, float gy, float gz) {  
-   
-   // if (gz == 0) gz = 1e-6;  
-   // float angleRadians = atan2(sqrt(gx*gx + gy*gy), gz);   
-   // float angleDegrees = angleRadians * (180.0 / PI);  
-	if(gz>1) gz=1;
-	if(gz<-1) gz=-1;
-	float angleRadians = acos(gz); 
-  float angleDegrees = angleRadians * (180.0 / PI); 
-	return angleDegrees;  
-} 
+float GravityToolface_1(float gx, float gy)
+{
+
+	float angle;
+	float T;
+	if (gx != 0)
+		T = -atan(gy / gx) * 180.0f / PI;
+	else if (gy > 0)
+		angle = 90;
+	else
+		angle = 270;
+	if (gx < 0 && gy == 0)
+		angle = 0;
+	else if (gx < 0 && gy > 0)
+		angle = T;
+	else if (gx > 0 && gy > 0)
+		angle = 180 + T;
+	else if (gx > 0 && gy == 0)
+		angle = 180;
+	else if (gx > 0 && gy < 0)
+		angle = 180 + T;
+	else if (gx < 0 && gy < 0)
+		angle = 360 + T;
+	return angle;
+}
+
+float MagToolface_1(float Bx, float By)
+{
+
+	float angle;
+	float T;
+	if (Bx != 0)
+		T = -atan(By / Bx) * 180.0f / PI;
+	else if (By > 0)
+		angle = 180;
+	else
+		angle = 0;
+	if (Bx < 0 &&By == 0)
+		angle = 0;
+	else if (Bx < 0 && By > 0)
+		angle = 90 + T;
+	else if (Bx > 0 && By > 0)
+		angle = 270 + T;
+	else if (Bx > 0 && By == 0)
+		angle = 0;
+	else if (Bx > 0 && By < 0)
+		angle = 270 + T;
+	else if (Bx < 0 && By < 0)
+		angle = 90 + T;
+	return angle;
+}
+// inc
+float calculateInclination_1(float gx, float gy, float gz)
+{
+	// if (gz == 0) gz = 1e-6;
+	// float angleRadians = atan2(sqrt(gx*gx + gy*gy), gz);
+	// float angleDegrees = angleRadians * (180.0 / PI);
+	float angleDegrees;
+	float gh = sqrt(gx * gx + gy * gy);
+	float I1 = atan(gh / gz) * (180.0 / PI);
+	float I2 = atan(gz / gh) * (180.0 / PI);
+
+	if (gz > 0 && gh == 0)
+		angleDegrees = 0;
+	else if (gz > 0 && gh < gz)
+		angleDegrees = I1;
+	else if (gz > 0 && gh > gz)
+		angleDegrees = 90 - I2;
+	else if (gz == 0)
+		angleDegrees = 90;
+	else if (gz < 0 && (gh > -gz || gh < gz))
+		angleDegrees = 90 - I2;
+	else if (gz < 0 && gh > gz && gh < -gz)
+		angleDegrees = 180 + I1;
+	else if (gz < 0 &&gh == 0)
+		angleDegrees = 180;
+	return angleDegrees;
+}
 
 // calculate dynamic toolface
-float calculateCurrentAngle_1(float startAngle, float changeAngle) {  
-    float currentAngle = fmod(startAngle + changeAngle, 360.0f); 
-    if (currentAngle < 0.0f) {
-        currentAngle += 360.0f;  
-    }  
-    return currentAngle;  
-} 
-
-float calculateAzi(float I,float Be,float Bn,float Bu,float Mz,float DEC,float Azibefore){
-	float MagA;
-	if(I==0.0f){
-		return Azibefore;
-	}else{
-	  I=I*PI/180.0f;
-		//float temp =-(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
-		float temp =(Mz+cos(I)*Bu)/(sin(I)*sqrt(Be*Be+Bn*Bn));
-		if(temp>1) temp=1;
-		if(temp<-1) temp=-1;
-	  MagA=acos(temp)/PI*180.0 -atan(Be/Bn)/PI*180.0;
-	 //MagA=acos(temp)/PI*180.0;
-	 // return MagA-DEC/PI*180.0;
-	 return MagA;
+float calculateCurrentAngle_1(float startAngle, float changeAngle)
+{
+	float currentAngle = fmod(startAngle + changeAngle, 360.0f);
+	if (currentAngle < 0.0f)
+	{
+		currentAngle += 360.0f;
 	}
+	return currentAngle;
 }
-*/
+
+float calculateAzi_1(float Bx, float By, float Bz, float I, float T, float a)
+{
+	float Ay, Az, angle,A;
+	Ay = Bx * sin(T) + By * cos(T);
+	Az = Bx * cos(T)*cos(I) - By*sin(T) * cos(T) + Bz * sin(I);
+	if (Az != 0)
+		A = atan(Ay / Az);
+	else if (Ay > 0)
+		angle = 90;
+	else
+		angle = 270;
+	if (Az > 0 &&Ay == 0)
+		angle = 0;
+	else if (Az > 0 && Ay > 0)
+		angle = A;
+	else if (Az < 0 && Ay > 0)
+		angle = 180 + A;
+	else if (Az < 0 &&Ay == 0)
+		angle = 180;
+	else if (Az < 0 && Ay < 0)
+		angle = 180 + A;
+	else if (Az > 0 && Ay < 0)
+		angle = 360 + A;
+
+	return angle;
+}

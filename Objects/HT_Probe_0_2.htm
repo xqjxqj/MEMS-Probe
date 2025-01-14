@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\HT_Probe_0_2.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\HT_Probe_0_2.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Sat Jan  4 18:03:26 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Thu Jan  9 10:39:54 2025
 <BR><P>
 <H3>Maximum Stack Usage =       1372 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1942,10 +1942,10 @@ Global Symbols
 <P><STRONG><a name="[1aa]"></a>AD855XSimulateParameterValue</STRONG> (Thumb, 100 bytes, Stack size 64 bytes, ad8557.o(.text.AD855XSimulateParameterValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = AD855XSimulateParameterValue &rArr; ADS8557_Set_Bit &rArr; delay_us
 </UL>
-<BR>[Calls]<UL><LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Reset
-<LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
-<LI><a href="#[1ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XDataPacket
+<BR>[Calls]<UL><LI><a href="#[1ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XDataPacket
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Reset
+<LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[449]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetMagGain
 </UL>
@@ -3034,10 +3034,10 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EventRecord2
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadNew
-<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 <LI><a href="#[4d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadTerminate
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadExit
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadTerminate
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[259]"></a>EvrRtxThreadExit</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, rtx_evr.o(.text.EvrRtxThreadExit))
@@ -7783,10 +7783,10 @@ Global Symbols
 <LI><a href="#[584]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemHeadPtr
 <LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxMemoryAlloc
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
-<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreNew
+<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreNew
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexNew
 <LI><a href="#[592]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueNew
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[585]"></a>osRtxMemoryFree</STRONG> (Thumb, 194 bytes, Stack size 56 bytes, rtx_memory.o(.text.osRtxMemoryFree))
@@ -7796,11 +7796,11 @@ Global Symbols
 <LI><a href="#[584]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemHeadPtr
 <LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxMemoryFree
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
-<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
+<BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexDelete
 <LI><a href="#[592]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueNew
 <LI><a href="#[5a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadFree
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[586]"></a>osRtxMemoryInit</STRONG> (Thumb, 150 bytes, Stack size 40 bytes, rtx_memory.o(.text.osRtxMemoryInit))
@@ -7820,14 +7820,14 @@ Global Symbols
 <LI><a href="#[587]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;atomic_link_get
 <LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxMemoryBlockAlloc
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
-<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreNew
+<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreNew
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexNew
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueGet
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueuePut
 <LI><a href="#[55e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isrRtxMessageQueuePut
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxMessageQueuePostProcess
 <LI><a href="#[592]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueNew
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[589]"></a>osRtxMemoryPoolFree</STRONG> (Thumb, 100 bytes, Stack size 32 bytes, rtx_mempool.o(.text.osRtxMemoryPoolFree))
@@ -7837,13 +7837,13 @@ Global Symbols
 <LI><a href="#[58a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;atomic_link_put
 <LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxMemoryBlockFree
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
-<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
+<BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexDelete
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueGet
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxMessageQueuePostProcess
 <LI><a href="#[592]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMessageQueueNew
 <LI><a href="#[5a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadFree
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[58c]"></a>osRtxMemoryPoolInit</STRONG> (Thumb, 152 bytes, Stack size 40 bytes, rtx_mempool.o(.text.osRtxMemoryPoolInit))
@@ -7946,14 +7946,14 @@ Global Symbols
 <LI><a href="#[5a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadSwitch
 <LI><a href="#[5a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadListRemove
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
-<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
+<BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexDelete
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexRelease
 <LI><a href="#[58f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadWaitExit
 <LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxTick_Handler
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxPendSV_Handler
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadTerminate
+<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxThreadNew
 </UL>
 
 <P><STRONG><a name="[58e]"></a>osRtxThreadListGet</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, rtx_thread.o(.text.osRtxThreadListGet))
@@ -8067,12 +8067,12 @@ Global Symbols
 <P><STRONG><a name="[5ae]"></a>osRtxThreadWaitEnter</STRONG> (Thumb, 118 bytes, Stack size 24 bytes, rtx_thread.o(.text.osRtxThreadWaitEnter))
 <BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = osRtxThreadWaitEnter &rArr; osRtxThreadSwitch &rArr; EvrRtxThreadSwitched &rArr; EventRecord2 &rArr; EventRecordItem &rArr; UnlockRecord
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayInsert
-<LI><a href="#[5a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadGetRunning
+<BR>[Calls]<UL><LI><a href="#[5a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadGetRunning
 <LI><a href="#[5a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxKernelGetState
 <LI><a href="#[5a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadSwitch
 <LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadBlocked
 <LI><a href="#[58e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadListGet
+<LI><a href="#[5af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayInsert
 </UL>
 <BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreAcquire
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxMutexAcquire
@@ -8085,11 +8085,11 @@ Global Symbols
 <P><STRONG><a name="[58f]"></a>osRtxThreadWaitExit</STRONG> (Thumb, 70 bytes, Stack size 24 bytes, rtx_thread.o(.text.osRtxThreadWaitExit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 220<LI>Call Chain = osRtxThreadWaitExit &rArr; osRtxThreadDispatch &rArr; osRtxThreadBlock &rArr; EvrRtxThreadPreempted &rArr; EventRecord2 &rArr; EventRecordItem &rArr; UnlockRecord
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayRemove
-<LI><a href="#[5a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadReadyPut
+<BR>[Calls]<UL><LI><a href="#[5a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadReadyPut
 <LI><a href="#[590]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadRegPtr
 <LI><a href="#[268]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadUnblocked
 <LI><a href="#[59c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDispatch
+<LI><a href="#[5b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayRemove
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxSemaphorePostProcess
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;svcRtxSemaphoreDelete
@@ -9493,9 +9493,9 @@ Local Symbols
 <P><STRONG><a name="[1ac]"></a>ADS8557_Set_Bit</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, ad8557.o(.text.ADS8557_Set_Bit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = ADS8557_Set_Bit &rArr; delay_us
 </UL>
-<BR>[Calls]<UL><LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Reset
-<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set
+<BR>[Calls]<UL><LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
+<LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Reset
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XSimulateParameterValue
 </UL>
@@ -9503,15 +9503,15 @@ Local Symbols
 <P><STRONG><a name="[1ad]"></a>ADS8557_Reset</STRONG> (Thumb, 96 bytes, Stack size 4 bytes, ad8557.o(.text.ADS8557_Reset))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = ADS8557_Reset
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
-<LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XSimulateParameterValue
+<BR>[Called By]<UL><LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XSimulateParameterValue
+<LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
 </UL>
 
 <P><STRONG><a name="[1ae]"></a>delay_us</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, ad8557.o(.text.delay_us))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
-<LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XSimulateParameterValue
+<BR>[Called By]<UL><LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD855XSimulateParameterValue
+<LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS8557_Set_Bit
 </UL>
 
 <P><STRONG><a name="[1ba]"></a>ADS8557_Set</STRONG> (Thumb, 96 bytes, Stack size 4 bytes, ad8557.o(.text.ADS8557_Set))
@@ -10420,9 +10420,7 @@ Local Symbols
 <P><STRONG><a name="[a2]"></a>svcRtxThreadTerminate</STRONG> (Thumb, 306 bytes, Stack size 48 bytes, rtx_thread.o(.text.svcRtxThreadTerminate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 300<LI>Call Chain = svcRtxThreadTerminate &rArr; osRtxMutexOwnerRelease &rArr; osRtxThreadWaitExit &rArr; osRtxThreadDispatch &rArr; osRtxThreadBlock &rArr; EvrRtxThreadPreempted &rArr; EventRecord2 &rArr; EventRecordItem &rArr; UnlockRecord
 </UL>
-<BR>[Calls]<UL><LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
-<LI><a href="#[5b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayRemove
-<LI><a href="#[5a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxKernelGetState
+<BR>[Calls]<UL><LI><a href="#[5a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxKernelGetState
 <LI><a href="#[593]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxMutexOwnerRelease
 <LI><a href="#[5a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadSwitch
 <LI><a href="#[258]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadError
@@ -10434,18 +10432,20 @@ Local Symbols
 <LI><a href="#[5a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDestroy
 <LI><a href="#[5ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadSetRunning
 <LI><a href="#[5aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadJoinWakeup
+<LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
+<LI><a href="#[5b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadDelayRemove
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rtx_thread.o(.text.osThreadTerminate)
 </UL>
 <P><STRONG><a name="[564]"></a>isrRtxThreadFlagsSet</STRONG> (Thumb, 130 bytes, Stack size 40 bytes, rtx_thread.o(.text.isrRtxThreadFlagsSet))
 <BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = isrRtxThreadFlagsSet &rArr; osRtxPostProcess &rArr; osRtxKernelErrorNotify &rArr; EvrRtxKernelErrorNotify &rArr; EventRecord2 &rArr; EventRecordItem &rArr; UnlockRecord
 </UL>
-<BR>[Calls]<UL><LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
-<LI><a href="#[566]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxObject
+<BR>[Calls]<UL><LI><a href="#[566]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxObject
 <LI><a href="#[25c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsSetDone
 <LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsError
 <LI><a href="#[55d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxPostProcess
 <LI><a href="#[45c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ThreadFlagsSet
+<LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadFlagsSet
 </UL>
@@ -10453,13 +10453,13 @@ Local Symbols
 <P><STRONG><a name="[9e]"></a>svcRtxThreadFlagsSet</STRONG> (Thumb, 210 bytes, Stack size 40 bytes, rtx_thread.o(.text.svcRtxThreadFlagsSet))
 <BR><BR>[Stack]<UL><LI>Max Depth = 260<LI>Call Chain = svcRtxThreadFlagsSet &rArr; osRtxThreadWaitExit &rArr; osRtxThreadDispatch &rArr; osRtxThreadBlock &rArr; EvrRtxThreadPreempted &rArr; EventRecord2 &rArr; EventRecordItem &rArr; UnlockRecord
 </UL>
-<BR>[Calls]<UL><LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
-<LI><a href="#[25e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsWaitCompleted
+<BR>[Calls]<UL><LI><a href="#[25e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsWaitCompleted
 <LI><a href="#[25c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsSetDone
 <LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EvrRtxThreadFlagsError
 <LI><a href="#[58f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadWaitExit
 <LI><a href="#[459]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ThreadFlagsCheck
 <LI><a href="#[45c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ThreadFlagsSet
+<LI><a href="#[565]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxThreadId
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rtx_thread.o(.text.osThreadFlagsSet)
 </UL>
