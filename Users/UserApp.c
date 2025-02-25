@@ -707,7 +707,8 @@ __NO_RETURN void user_app_init(void *arg)
             MagCalibrate(&fMagData.MagX, &fMagData.MagY, &fMagData.MagZ, fTemperature);
 
             // 姿态角解算
-            if (fRotate < 80.0f && fRotate > -80.0f)
+            if (fRotate < 800000000.0f && fRotate > -800000000.0f)
+						//if(1)
             {
                 // 静态
                 StaticToolface = GravityToolface(fDiffAccData.AccLxP, fDiffAccData.AccLyP);
