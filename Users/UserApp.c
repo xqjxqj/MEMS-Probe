@@ -460,7 +460,7 @@ void ConvertExtADC(void)
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.GyroRef) / 0.67f; // dps
     fRotate = ftmp;
 
-    // temperature温度
+    // temperature温度，未存flash
     ftmp = RawExtADCData[7]; // Vout=892.2+3.0*（T-25）/967  //  AccSensorRef.ADC_A_Ref = 2497，AccSensorRef.TempRef=982
     ftmp = (ftmp / 32768.0f * AccSensorRef.ADC_A_Ref + AccSensorRef.ADC_A_Ref - AccSensorRef.TempRef) / 3.0f + 25.0f;
     fTemperature = ftmp;
@@ -651,7 +651,7 @@ __NO_RETURN void user_app_init(void *arg)
     HAL_TIM_Base_Start_IT(&htim4);
     HAL_ADC_Start_DMA(&hadc5, (uint32_t *)vbat, 2);
 
-    // HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim1); // 开启ExtADC 定期采样
     User_UART_Start(Huart1_Index);
     // Init_MWD_APP();
@@ -707,7 +707,7 @@ __NO_RETURN void user_app_init(void *arg)
             MagCalibrate(&fMagData.MagX, &fMagData.MagY, &fMagData.MagZ, fTemperature);
 
             // 姿态角解算
-            if (fRotate < 800000000.0f && fRotate > -800000000.0f)
+            if (fRotate < 100000.1f && fRotate > -100000.1f)
 						//if(1)
             {
                 // 静态
@@ -731,8 +731,8 @@ __NO_RETURN void user_app_init(void *arg)
                 // 动态
 
                 DynamicToolface += fRotate / 50.0f;
-                if (DynamicToolface > 360.0f)
-                    DynamicToolface -= 360;
+                //if (DynamicToolface > 360.0f)
+                    //DynamicToolface -= 360;
                 PSO();
             }
             // 姿态解算结束
